@@ -1,4 +1,14 @@
 ---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<div class="mx-auto w-full">Footer</div>
+<div class:list={[className]}>
+  <div class="mx-auto w-full flex flex-col items-center">
+    <div class="font-semibold">Callnalysis @ 2023</div>
+    <div class="text-slate-500 text-sm">All rights reserved</div>
+  </div>
+</div>

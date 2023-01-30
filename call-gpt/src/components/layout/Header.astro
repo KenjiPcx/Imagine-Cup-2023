@@ -1,4 +1,53 @@
 ---
+import { Icon } from "astro-icon";
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+
+const routes = [
+  {
+    name: "History",
+    path: "/history",
+  },
+  {
+    name: "Analytics",
+    path: "/analytics",
+  },
+  {
+    name: "Documentation",
+    path: "/docs",
+  },
+  {
+    name: "Contact",
+    path: "/contact",
+  },
+];
 ---
 
-<div>Header</div>
+<div class:list={[className]}>
+  <div class="mx-auto w-full flex justify-between">
+    <div class="text-lg font-bold font-mono"><a href="/">Callnalysis</a></div>
+    <Icon name="ic:round-menu" width={24} class="my-auto" id="menu-btn" />
+  </div>
+  <nav>
+    <ul class="flex flex-col items-start my-2">
+      {
+        routes.map((route) => (
+          <li class="ml-1">
+            <a href={`${route.path}`}>{route.name}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</div>
+
+<script>
+  const menuBtn = document.getElementById("menu-btn");
+  const nav = document.querySelector("nav");
+  menuBtn!.addEventListener("click", () => {
+    nav!.classList.toggle("hidden");
+  });
+</script>
