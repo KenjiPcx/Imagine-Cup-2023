@@ -17,7 +17,10 @@
     "asn1.js": "^5.4.1",
     "astro": "^2.0.2",
     "astro-icon": "^0.8.0",
+    "axios": "^1.2.6",
+    "form-data": "^4.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.25.0",
+    "openai": "^3.1.0",
     "solid-js": "^1.4.3",
     "tailwindcss": "^3.0.24"
   }
