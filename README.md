@@ -28,3 +28,23 @@ At the end of the call
   - Calendar integration
     - Helps schedules any events
     - Helps schedules any todos
+
+## Development
+### Project Structure
+imagine-cup-2023
+- call-gpt 
+  - src (Astro frontend but with solidjs components, [check here for integrating React](https://docs.astro.build/en/core-concepts/framework-components/) if you don't want to use solid )
+- openai-completion (our Azure functions project, should rename this to backend/functions)
+  - completion (function for gpt completion api)
+  - saveCall (function to save call)
+
+### How to Run
+- call-gpt frontend, I'm using pnpm, its a lot faster and more efficient than npm, [install it here](https://pnpm.io/installation)
+```powershell
+cd call-gpt
+pnpm install
+pnpm start
+```
+
+- functions
+just open up the function > index.ts and press ```f5``` and visual studio code should run it for you
