@@ -48,3 +48,22 @@ pnpm start
 
 - functions
 just open up the function > index.ts and press ```f5``` and visual studio code should run it for you
+
+- secrets
+  - for call-gpt frontend, create a .env file under the call-gpt folder and fill in ```SPEECH_KEY``` and ```SPEECH_REGION```, these are for our speech service, you'll need to create one yourself, its free
+  - for azure functions, create a local.settings.json file (same level with package.json file) under the functions app with this json
+  ```
+  {
+    "IsEncrypted": false,
+    "Values": {
+      "AzureWebJobsStorage": "",
+      "FUNCTIONS_WORKER_RUNTIME": "node",
+      "OpenAIApiKey": "API_KEY"
+    },
+    "Host": {
+      "LocalHttpPort": 7071,
+      "CORS": "*",
+      "CORSCredentials": false
+    }
+  }
+  ```
