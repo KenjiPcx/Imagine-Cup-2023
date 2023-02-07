@@ -5,20 +5,17 @@ import { Routes, Route } from "@solidjs/router";
 const config: HopeThemeConfig = {
   initialColorMode: "system",
   lightTheme: {
-    colors: {
-      primary9: "white",
-    },
+    colors: {},
   },
   darkTheme: {
-    colors: {
-      primary9: "#07191d",
-    },
+    colors: {},
   },
 };
 
 const CallHistory = lazy(() => import("./pages/CallsHistory"));
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const App: Component = () => {
   return (
@@ -26,10 +23,8 @@ const App: Component = () => {
       <Routes>
         <Route path="/" component={Home} />
         <Route path="/call-history" component={CallHistory} />
-        <Route
-          path="/about"
-          element={<div>This site was made with Solid</div>}
-        />
+        <Route path="/about" component={About} />
+        <Route path="/profile" component={Profile} />
       </Routes>
     </HopeProvider>
   );

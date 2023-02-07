@@ -1,9 +1,9 @@
 import Layout from "../components/Layout";
 
-export default function About() {
+export default function Profile() {
   return (
     <Layout>
-      <div>About Page</div>
+      <div>Profile Page</div>
     </Layout>
   );
 }

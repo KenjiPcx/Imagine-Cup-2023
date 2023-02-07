@@ -1,10 +1,10 @@
-import { Container } from "@hope-ui/solid";
-import Navbar from "../components/Navbar";
+import { Box } from "@hope-ui/solid";
+import Layout from "../components/Layout";
+
 export default function Home() {
   return (
-    <Container>
-      <Navbar />
-      Home
-    </Container>
+    <Layout>
+      <Box>Hello</Box>
+    </Layout>
   );
 }
