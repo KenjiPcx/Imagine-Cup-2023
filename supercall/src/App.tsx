@@ -1,31 +1,21 @@
-import { Component, lazy } from "solid-js";
-import { HopeProvider, HopeThemeConfig } from "@hope-ui/solid";
-import { Routes, Route } from "@solidjs/router";
+import { Component } from "solid-js";
+import { HopeProvider } from "@hope-ui/solid";
+import { initAuth } from "./scripts/authConfig";
+import { hopeConfig } from "./scripts/hopeConfig";
+import Layout from "./components/layout/Layout";
+import Pages from "./pages/Pages";
+import { AuthProvider } from "./components/auth/AuthProvider";
 
-const config: HopeThemeConfig = {
-  initialColorMode: "system",
-  lightTheme: {
-    colors: {},
-  },
-  darkTheme: {
-    colors: {},
-  },
-};
-
-const CallHistory = lazy(() => import("./pages/CallsHistory"));
-const Home = lazy(() => import("./pages/Home"));
-const About = lazy(() => import("./pages/About"));
-const Profile = lazy(() => import("./pages/Profile"));
+const msalInstance = initAuth();
 
 const App: Component = () => {
   return (
-    <HopeProvider config={config}>
-      <Routes>
-        <Route path="/" component={Home} />
-        <Route path="/call-history" component={CallHistory} />
-        <Route path="/about" component={About} />
-        <Route path="/profile" component={Profile} />
-      </Routes>
+    <HopeProvider config={hopeConfig}>
+      <AuthProvider instance={msalInstance}>
+        <Layout>
+          <Pages />
+        </Layout>
+      </AuthProvider>
     </HopeProvider>
   );
 };
