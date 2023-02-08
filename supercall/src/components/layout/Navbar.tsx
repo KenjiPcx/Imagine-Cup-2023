@@ -14,9 +14,14 @@ import {
   Anchor,
 } from "@hope-ui/solid";
 import { FiMenu } from "solid-icons/fi";
+import { Show } from "solid-js";
+import { useIsAuthenticated } from "../auth/AuthProvider";
+import LoginBtn from "../auth/LoginBtn";
+import LogoutBtn from "../auth/LogoutBtn";
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = createDisclosure();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
     <>
@@ -47,15 +52,9 @@ export default function Navbar() {
               <Anchor href="/profile">Profile</Anchor>
             </nav>
             <Box mb="$4">
-              <Button mr="$3" size="sm">
-                Login
-              </Button>
-              <Button mr="$3" size="sm">
-                Sign Up
-              </Button>
-              <Button mr="$3" size="sm">
-                Logout
-              </Button>
+              <Show when={isAuthenticated()} fallback={<LoginBtn />}>
+                <LogoutBtn />
+              </Show>
             </Box>
           </DrawerBody>
         </DrawerContent>
