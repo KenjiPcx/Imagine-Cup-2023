@@ -12,7 +12,7 @@ export default function Layout(props: LayoutProps) {
     <Container centerContent>
       <Navbar />
       <Box class="py-4 px-6 w-full">
-        <Box class="w-full outline">{props.children}</Box>
+        <Box class="w-full">{props.children}</Box>
       </Box>
       <Footer />
     </Container>

@@ -15,13 +15,14 @@ import {
 } from "@hope-ui/solid";
 import { FiMenu } from "solid-icons/fi";
 import { Show } from "solid-js";
-import { useIsAuthenticated } from "../auth/AuthProvider";
+// import { useIsAuthenticated } from "../auth/AuthProvider";
 import LoginBtn from "../auth/LoginBtn";
 import LogoutBtn from "../auth/LogoutBtn";
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = createDisclosure();
-  const isAuthenticated = useIsAuthenticated();
+  // const isAuthenticated = useIsAuthenticated();
+  let isAuthenticated = () => true;
 
   return (
     <>

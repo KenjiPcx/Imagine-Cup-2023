@@ -1,16 +1,17 @@
-import { Button, Center, Flex, Heading, Text } from "@hope-ui/solid";
-import { createSignal, Show } from "solid-js";
-import AnalysisResults from "../components/analysis/AnalysisResults";
-import MessagesStore from "../components/analysis/MessagesStore";
-import { initRecognizer } from "../scripts/azureAiHelpers";
-import { mockMessages, mockWarnings } from "../scripts/mockData";
-import { generateAnalyzeMessagesPrompt } from "../scripts/openAiHelper";
-import { Warning } from "../scripts/types";
+import axios from "axios";
+import { createSignal, For, Show } from "solid-js";
+import { initRecognizer } from "../../scripts/azureAiHelpers";
+import { generateAnalyzeMessagesPrompt } from "../../scripts/openAiHelper";
+import { mockMessages, mockWarnings } from "../../scripts/mockData";
+import type { Detection, Warning } from "../../scripts/types";
+import AnalysisResults from "./AnalysisResults";
+import MessagesStore from "./MessagesStore";
+import { Box, Button, Flex } from "@hope-ui/solid";
 
 const speechKey = import.meta.env.VITE_SPEECH_KEY as string;
 const speechRegion = import.meta.env.VITE_SPEECH_REGION as string;
 
-export default function Home() {
+export default function ChatAnalyzer() {
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages);
   const [isScam, setIsScam] = createSignal(true);
@@ -61,13 +62,14 @@ export default function Home() {
     //   .catch(console.warn);
   };
 
-  return (
-    <>
-      <Center mb="$6" flex={"auto"} flexDirection="column">
-        <Heading size={"xl"}>Supercharge your calls</Heading>
-        <Text size={"lg"}>Gain more insights</Text>
-      </Center>
+  <div class="w-full flex justify-center mt-5">
+    <button class="outline w-fit my-auto py-1 px-3 rounded-3xl text-sm text-blue-500 mx-auto">
+      Save Call
+    </button>
+  </div>;
 
+  return (
+    <Box>
       <MessagesStore start={start()} messages={messages()} />
 
       <Flex my="$6" justifyContent="space-evenly">
@@ -91,7 +93,7 @@ export default function Home() {
           Analyze Messages
         </Button>
       </Flex>
-      <AnalysisResults isScam={isScam()} warnings={warnings()} />
-    </>
+      {/* <AnalysisResults isScam={isScam()} warnings={warnings()} /> */}
+    </Box>
   );
 }
