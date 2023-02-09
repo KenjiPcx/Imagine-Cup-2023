@@ -8,21 +8,35 @@ interface MessagesStoreProps {
 
 export default function (props: MessagesStoreProps) {
   return (
-    <Box minH="62.5vh" overflow="scroll" bgColor="rebeccapurple">
+    <Box
+      minH="62.5vh"
+      overflow="scroll"
+      p="$4"
+      bgColor="$neutral6"
+      rounded="$sm"
+    >
       <Show
         when={props.start || props.messages.length > 0}
         fallback={
-          <div class="flex flex-col justify-center items-center h-full p-4 text-center">
+          <Box class="flex flex-col justify-center items-center h-full p-4 text-center">
             <p>No messages yet</p>
             <p>Start a recording!</p>
-          </div>
+          </Box>
         }
       >
         <For each={props.messages}>
           {(message: string) => (
-            <div class="first:mt-0 px-2 py-1 my-3 outline text-indigo-500 rounded-lg">
+            <Box
+              mb="$4"
+              py="$2"
+              px="$4"
+              outline="solid"
+              rounded="$sm"
+              _last={{ mb: 0 }}
+              class="first:mt-0 px-2 py-1 my-3 text-indigo-500 rounded-lg"
+            >
               {message}
-            </div>
+            </Box>
           )}
         </For>
       </Show>
