@@ -49,7 +49,7 @@ export const generateTasksDetectionPromps = (messages: string[]) => {
     The dialog is as follows: "${messages.join(" ")}"`;
 };
 
-export const generateEventsToAttendPrompt = (messages: string[]) => {
+export const generateMeetingsDetectionPrompt = (messages: string[]) => {
   return `From this dialog, extract the meetings/appointments, refer to them all as meetings. If any of the reason to meet, datetime or location are mentioned, include them, otherwise just leave it empty. Return all of them in a json object with this structure 
     {
         meetings: {

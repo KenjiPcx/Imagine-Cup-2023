@@ -5,27 +5,19 @@ import {
   model,
   temperature,
 } from "../scripts/openAIConfig";
-import { generateExtractContentByInterestsPrompt } from "../scripts/prompts";
+import { generateTasksDetectionPromps } from "../scripts/prompts";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  context.log(
-    "Identify Content of Interests HTTP trigger function processed a request."
-  );
+  context.log("Identify Tasks HTTP trigger function processed a request.");
 
   const messages: string[] =
     req.query.messages || (req.body && req.body.messages);
 
-  // todo: get user interests
-  const userInterests = [];
-
-  const prompt = generateExtractContentByInterestsPrompt(
-    messages,
-    userInterests
-  );
-  if (prompt.length > max_tokens - 200) {
+  const prompt = generateTasksDetectionPromps(messages);
+  if (prompt.length > max_tokens - 300) {
     context.res = {
       status: 400,
       body: "Messages are too long",

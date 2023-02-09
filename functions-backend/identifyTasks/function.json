@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/identifyTodos/index.js"
+  "scriptFile": "../dist/identifyTasks/index.js"
 }
