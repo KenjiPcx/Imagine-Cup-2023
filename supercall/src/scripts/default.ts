@@ -1,4 +1,9 @@
-import { AnalyzeMessagesResult, Meeting, Task } from "./types";
+import {
+  AnalyzeMessagesResult,
+  ContentOfInterest,
+  Meeting,
+  Task,
+} from "./types";
 
 export const DefaultAnalyzeMessagesResult: AnalyzeMessagesResult = {
   hasTasksOrPotentialTasks: true,
@@ -54,5 +59,16 @@ export const DefaultMeetings: Meeting[] = [
     location: "park",
     reasonToMeet: "run in park",
     participants: "kn and je",
+  },
+];
+
+export const DefaultContentOfInterests: ContentOfInterest[] = [
+  {
+    topicOfInterest: "Anime to watch",
+    content: ["my hero", "gibiate", "gleipnir"],
+  },
+  {
+    topicOfInterest: "World affairs",
+    content: ["Malaysia growth 8%", "Andrew tate arrewsted", "Fifa world cup"],
   },
 ];

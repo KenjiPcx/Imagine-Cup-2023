@@ -1,20 +1,15 @@
 import AnalysisCard from "./AnalysisCard";
 import type { Meeting } from "../../scripts/types";
-import { Accessor, For, Show } from "solid-js";
-import MessageBox from "./MessageBox";
-import TaskBox from "./TaskBox";
+import { For, Show } from "solid-js";
 import MeetingBox from "./MeetingBox";
 
-interface ExtractedMeetingsCardProps {
+interface MeetingsCardProps {
   meetingsResults: Meeting[];
-  show: Accessor<boolean>;
 }
 
-export default function ExtractedMeetingsCard(
-  props: ExtractedMeetingsCardProps
-) {
+export default function MeetingsCard(props: MeetingsCardProps) {
   return (
-    <Show when={props.show()}>
+    <Show when={props.meetingsResults.length > 0}>
       <AnalysisCard heading="Extracted Meetings">
         <For each={props.meetingsResults}>
           {(meeting) => <MeetingBox meeting={meeting} />}

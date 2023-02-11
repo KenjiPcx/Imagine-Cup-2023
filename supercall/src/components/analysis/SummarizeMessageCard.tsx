@@ -4,7 +4,6 @@ import MessageBox from "./MessageBox";
 
 interface SummarizeMessagesCardProps {
   summary: Accessor<string>;
-  show: Accessor<boolean>;
 }
 
 export default function SummarizeMessagesCard(
@@ -20,7 +19,7 @@ export default function SummarizeMessagesCard(
   });
 
   return (
-    <Show when={props.show()}>
+    <Show when={props.summary() !== ""}>
       <AnalysisCard heading="Summary of Messages">
         <For each={paragraphs()}>
           {(paragraph) => <MessageBox message={paragraph} alignment="left" />}

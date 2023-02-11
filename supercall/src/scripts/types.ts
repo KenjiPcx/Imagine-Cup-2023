@@ -56,3 +56,8 @@ export type InterestingContentExtractionResult = {
 export type SummarizeResult = {
   summary: string;
 };
+
+export type ContentOfInterest = {
+  topicOfInterest: string;
+  content: string[];
+};

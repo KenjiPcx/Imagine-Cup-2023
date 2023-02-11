@@ -5,12 +5,13 @@ import { createStore } from "solid-js/store";
 import ActionsMenu from "../components/analysis/ActionsMenu";
 import AnalysisCard from "../components/analysis/AnalysisCard";
 import AnalyzeMessagesResultCard from "../components/analysis/AnalyzeMessagesResultCard";
-import ExtractedMeetingsCard from "../components/analysis/ExtractedMeetingsCard";
-import ExtractedTasksCard from "../components/analysis/ExtractedTasksCard";
+import MeetingsCard from "../components/analysis/MeetingsCard";
+import TasksCard from "../components/analysis/TasksCard";
 import MessagesStore from "../components/analysis/MessagesStore";
 import SummarizeMessagesCard from "../components/analysis/SummarizeMessageCard";
 import {
   analyzeMessagesUrl,
+  identifyContentOfInterestUrl,
   identifyMeetingsUrl,
   identifyTasksUrl,
   summarizeMessagesUrl,
@@ -18,12 +19,19 @@ import {
 import { initRecognizer } from "../scripts/azureAiHelpers";
 import {
   DefaultAnalyzeMessagesResult,
+  DefaultContentOfInterests,
   DefaultMeetings,
   DefaultTaskResult,
 } from "../scripts/default";
 import { mockMessages, mockWarnings, mockMessages2 } from "../scripts/mockData";
 import { generateAnalyzeMessagesPrompt } from "../scripts/openAiHelper";
-import { AnalyzeMessagesResult, Meeting, Task } from "../scripts/types";
+import {
+  AnalyzeMessagesResult,
+  ContentOfInterest,
+  Meeting,
+  Task,
+} from "../scripts/types";
+import ContentOfInterestCard from "../components/analysis/ContentOfInterestCard";
 
 const speechKey = import.meta.env.VITE_SPEECH_KEY as string;
 const speechRegion = import.meta.env.VITE_SPEECH_REGION as string;
@@ -37,18 +45,17 @@ export default function Home() {
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
     DefaultAnalyzeMessagesResult
   );
-  const [showSummaryResults, setShowSummaryResults] = createSignal(true);
   const [summaryResults, setSummaryResults] = createSignal(
     "lorem ipsum dolor sit amet \n hello"
   );
-  const [showMeetingDetection, setShowMeetingDetection] = createSignal(true);
   const [meetingsDetectionRes, setMeetingsDetectionRes] =
     createStore<Meeting[]>(DefaultMeetings);
-  const [showTasksDetection, setShowTasksDetection] = createSignal(true);
   const [tasksDetectionRes, setTasksDetectionRes] =
     createStore<Task[]>(DefaultTaskResult);
-  const [showScamDetection, setShowScamDetection] = createSignal(true);
   const [scamDetectionRes, setScamDetectionRes] = createStore<string[]>([]);
+  const [contentOfInterests, setContentOfInterests] = createStore<
+    ContentOfInterest[]
+  >(DefaultContentOfInterests);
 
   const recognizer = initRecognizer(
     speechKey,
@@ -75,7 +82,6 @@ export default function Home() {
         messages: messages(),
       });
       setSummaryResults(res.data as string);
-      setShowSummaryResults(true);
     } catch (err) {
       console.log("error", err);
     }
@@ -115,7 +121,6 @@ export default function Home() {
         messages: messages(),
       });
       setTasksDetectionRes(res.data as Task[]);
-      setShowTasksDetection(true);
     } catch (err) {
       console.warn(err);
     }
@@ -128,9 +133,27 @@ export default function Home() {
         messages: messages(),
       });
       setMeetingsDetectionRes(res.data as Meeting[]);
-      setShowMeetingDetection(true);
     } catch (err) {
       console.warn(err);
+    }
+  };
+
+  const extractContentOfInterests = async (topicsOfInterest: string[]) => {
+    try {
+      const res = await axios.post(identifyContentOfInterestUrl, {
+        messages: messages(),
+        topicsOfInterest: topicsOfInterest,
+      });
+      const newContent = res.data as ContentOfInterest[];
+      const existingKeys = new Set(
+        contentOfInterests.map((c) => c.topicOfInterest)
+      );
+      const filteredContent = newContent.filter(
+        (content) => !existingKeys.has(content.topicOfInterest)
+      );
+      setContentOfInterests((prev) => [...prev, ...filteredContent]);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -145,6 +168,8 @@ export default function Home() {
     //   })
     //   .catch(console.warn);
   };
+
+  const clearAll = () => {};
 
   return (
     <>
@@ -182,19 +207,14 @@ export default function Home() {
           show={showAnalyzeMessageResults}
           results={analyzeMessagesResult}
         />
-        <SummarizeMessagesCard
-          show={showSummaryResults}
-          summary={summaryResults}
-        />
-        <ExtractedTasksCard
-          show={showTasksDetection}
-          tasksResults={tasksDetectionRes}
-        />
-        <ExtractedMeetingsCard
-          show={showMeetingDetection}
-          meetingsResults={meetingsDetectionRes}
-        />
-        <AnalysisCard heading="Interesting content">Heki</AnalysisCard>
+        <SummarizeMessagesCard summary={summaryResults} />
+        <TasksCard tasksResults={tasksDetectionRes} />
+        <MeetingsCard meetingsResults={meetingsDetectionRes} />
+        <Show when={contentOfInterests.length > 0}>
+          <For each={contentOfInterests}>
+            {(content) => <ContentOfInterestCard contentOfInterest={content} />}
+          </For>
+        </Show>
       </VStack>
       {/* <AnalysisResults isScam={isScam()} warnings={warnings()} /> */}
     </>

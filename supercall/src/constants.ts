@@ -1,2 +1,15 @@
-export const completionUrl = "http://localhost:7071/api/completion";
-export const saveCallUrl = "http://localhost:7071/api/saveCall";
+const rootEndpoint = "http://localhost:7071/api";
+
+// AI endpoitns
+export const completionUrl = `${rootEndpoint}/completion`;
+export const analyzeMessagesUrl = `${rootEndpoint}/analyzeMessages`;
+export const summarizeMessagesUrl = `${rootEndpoint}/summarizeMessages`;
+export const identifyScamsUrl = `${rootEndpoint}/identifyScams`;
+export const identifyTasksUrl = `${rootEndpoint}/identifyTasks`;
+export const identifyMeetingsUrl = `${rootEndpoint}/identifyMeetings`;
+export const identifyContentOfInterestUrl = `${rootEndpoint}/indentifyContentOfInterest`;
+
+// Database Operations
+export const getCallByKey = `${rootEndpoint}/getCallByKey`;
+export const getAllCallByUserId = `${rootEndpoint}/getAllCalls`;
+export const saveCallUrl = `${rootEndpoint}/saveCall`;
