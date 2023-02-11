@@ -27,7 +27,6 @@ import {
   summarizeMessagesUrl,
 } from "../constants";
 import { initRecognizer } from "../scripts/azureAiHelpers";
-
 import {
   mockAnalyzeMessagesResult,
   mockContentOfInterests,
@@ -42,8 +41,7 @@ import {
   ScamDetectionResult,
   Task,
 } from "../scripts/types";
-import ContentOfInterestCard from "../components/analysis/ContentOfInterestCard";
-import ScamDetectionResultsModal from "../components/analysis/ScamDetectionResultsModal";
+
 import {
   showLoadingNotification,
   showLoadingNotificationForAiProcessing,
@@ -65,6 +63,12 @@ const MessagesStore = lazy(
 const SummarizeMessagesCard = lazy(
   () => import("../components/analysis/SummarizeMessageCard")
 );
+const ScamDetectionResultsModal = lazy(
+  () => import("../components/analysis/ScamDetectionResultsModal")
+);
+const ContentOfInterestCard = lazy(
+  () => import("../components/analysis/ContentOfInterestCard")
+);
 
 const speechKey = import.meta.env.VITE_SPEECH_KEY as string;
 const speechRegion = import.meta.env.VITE_SPEECH_REGION as string;
@@ -81,7 +85,7 @@ const defaultScamDetectionResult: ScamDetectionResult = {
 };
 
 export default function Home() {
-  const [user] = createResource<clientPrincipal | null>(getUserInfo);
+  // const [user] = createResource<clientPrincipal | null>(getUserInfo);
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
@@ -101,7 +105,7 @@ export default function Home() {
   } = createDisclosure();
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
-  >(mockContentOfInterests);
+  >([]);
 
   const recognizer = initRecognizer(
     speechKey,
@@ -155,8 +159,10 @@ export default function Home() {
     try {
       const res = await axios.post(analyzeMessagesUrl, {
         messages: messages(),
+        userInterests: mockUserInterests,
       });
       res.data.show = true;
+      console.log(res.data);
       setAnalyzeMessagesResult(res.data as AnalyzeMessagesResult);
       updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
@@ -209,20 +215,18 @@ export default function Home() {
     }
   };
 
-  const extractContentOfInterests = async (topicsOfInterest: string[]) => {
-    const id = "extract-content-of-interests";
+  const extractContentOfInterests = async (topicsOfInterests: string[]) => {
+    const id = `extract-content-of-interests-${topicsOfInterests.join("-")}}`;
     showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyContentOfInterestUrl, {
         messages: messages(),
-        topicsOfInterest: topicsOfInterest,
+        topicsOfInterests: topicsOfInterests,
       });
       const newContent = res.data as ContentOfInterest[];
-      const existingKeys = new Set(
-        contentOfInterests.map((c) => c.topicOfInterest)
-      );
+      const existingKeys = new Set(contentOfInterests.map((c) => c.topic));
       const filteredContent = newContent.filter(
-        (content) => !existingKeys.has(content.topicOfInterest)
+        (content) => !existingKeys.has(content.topic)
       );
       setContentOfInterests((prev) => [...prev, ...filteredContent]);
       updateLoadingNotificationForSuccessfulJob(id);
@@ -255,12 +259,12 @@ export default function Home() {
 
   return (
     <>
-      <Show when={user() !== null} fallback={<Box>User not logged in</Box>}>
+      {/* <Show when={user() !== null} fallback={<Box>User not logged in</Box>}>
         <Box>
           User {user()?.userId} with details = {user()?.userDetails} is logged
           in
         </Box>
-      </Show>
+      </Show> */}
       <Center mb="$6" flex={"auto"} flexDirection="column">
         <Heading size={"xl"}>Supercharge your calls</Heading>
         <Text size={"lg"}>Gain more insights</Text>
@@ -290,8 +294,13 @@ export default function Home() {
         />
       </Flex>
 
-      <VStack spacing="$6">
-        <AnalyzeMessagesResultCard results={analyzeMessagesResult} />
+      <VStack spacing="$6" mb="$4">
+        <AnalyzeMessagesResultCard
+          results={analyzeMessagesResult}
+          extractTasks={extractTasks}
+          extractMeetings={extractMeetings}
+          extractContentOfInterests={extractContentOfInterests}
+        />
         <SummarizeMessagesCard summary={summaryResults} />
         <TasksCard tasksResults={tasksDetectionRes} />
         <MeetingsCard meetingsResults={meetingsDetectionRes} />
@@ -302,16 +311,16 @@ export default function Home() {
         </Show>
       </VStack>
 
-      <Flex my="$6" justifyContent="space-evenly" wrap="wrap" rowGap="$5">
-        <Button size={"sm"} colorScheme="primary" onClick={saveCallInfo}>
-          Save Call
-        </Button>
+      <Flex my="$2" justifyContent="center" flexDirection="column" rowGap="$3">
         <Button
           size={"sm"}
           colorScheme="danger"
           onClick={clearMessagesAndReset}
         >
           Clear Messages
+        </Button>
+        <Button size={"sm"} colorScheme="primary" onClick={saveCallInfo}>
+          Save Call
         </Button>
       </Flex>
 

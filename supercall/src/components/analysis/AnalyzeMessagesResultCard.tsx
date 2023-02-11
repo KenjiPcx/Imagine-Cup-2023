@@ -6,6 +6,9 @@ import MessageBox from "./MessageBox";
 
 interface AnalyzeMessagesResultCardProps {
   results: Accessor<AnalyzeMessagesResult>;
+  extractTasks: () => Promise<void>;
+  extractMeetings: () => Promise<void>;
+  extractContentOfInterests: (topic: string[]) => Promise<void>;
 }
 
 export default function AnalyzeMessagesResultCard(
@@ -43,12 +46,20 @@ export default function AnalyzeMessagesResultCard(
           justifyContent="center"
         >
           <Show when={props.results().hasTasksOrPotentialTasks}>
-            <Button size={"sm"} colorScheme="success">
+            <Button
+              size={"sm"}
+              colorScheme="success"
+              onClick={props.extractTasks}
+            >
               Tasks
             </Button>
           </Show>
           <Show when={props.results().hasBookingsOrAppointments}>
-            <Button size={"sm"} colorScheme="success">
+            <Button
+              size={"sm"}
+              colorScheme="success"
+              onClick={props.extractMeetings}
+            >
               Meetings
             </Button>
           </Show>
@@ -60,7 +71,11 @@ export default function AnalyzeMessagesResultCard(
             >
               {(topic) => {
                 return (
-                  <Button size={"sm"} colorScheme="accent">
+                  <Button
+                    size={"sm"}
+                    colorScheme="accent"
+                    onClick={() => props.extractContentOfInterests([topic])}
+                  >
                     {topic}
                   </Button>
                 );
