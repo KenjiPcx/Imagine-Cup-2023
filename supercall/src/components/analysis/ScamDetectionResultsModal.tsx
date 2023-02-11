@@ -26,10 +26,7 @@ export default function ScamDetectionResultsModal(
   props: ScamDetectionResultsModalProps
 ) {
   return (
-    <Modal
-      opened={props.isOpen() && props.scamDetectionRes.isScam}
-      onClose={props.onClose}
-    >
+    <Modal opened={props.isOpen()} onClose={props.onClose}>
       <ModalOverlay />
       <ModalContent w="90%">
         <ModalCloseButton />

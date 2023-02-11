@@ -1,10 +1,12 @@
 import { Box } from "@hope-ui/solid";
+import { Property } from "@stitches/core/types/css";
 import { JSXElement } from "solid-js";
 
 interface MessageBoxProps {
   message: string;
   alignment?: "left" | "right" | "center";
   children?: JSXElement;
+  bgColor?: Property.BackgroundColor;
 }
 
 export default function MessageBox(props: MessageBoxProps) {
@@ -16,7 +18,7 @@ export default function MessageBox(props: MessageBoxProps) {
       rounded="$sm"
       h="fit-content"
       textAlign={props.alignment || "left"}
-      bgColor="$info8"
+      bgColor={props.bgColor || "$info8"}
       _last={{ mb: 0 }}
     >
       {props.message}

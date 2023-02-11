@@ -1,4 +1,4 @@
-import { Accessor, createSignal, For, onMount, Show } from "solid-js";
+import { Accessor, createEffect, createSignal, For, Show } from "solid-js";
 import AnalysisCard from "./AnalysisCard";
 import MessageBox from "./MessageBox";
 
@@ -10,7 +10,7 @@ export default function SummarizeMessagesCard(
   props: SummarizeMessagesCardProps
 ) {
   const [paragraphs, setParagraphs] = createSignal<string[]>([]);
-  onMount(() => {
+  createEffect(() => {
     const newParagraphs = props
       .summary()
       .split("\n")

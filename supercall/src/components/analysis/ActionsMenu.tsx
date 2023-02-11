@@ -42,7 +42,7 @@ export default function ActionsMenu(props: ActionsMenuProps) {
             Extract Bookings/Appointments
           </MenuItem>
           <MenuItem
-            colorScheme="danger"
+            colorScheme="warning"
             onSelect={props.detectScamsAndShadyContent}
           >
             Detect Scams/Shady content

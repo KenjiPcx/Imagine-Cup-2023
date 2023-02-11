@@ -23,12 +23,12 @@ export default function TaskBox(props: TaskBoxProps) {
       </Text>
       <UnorderedList>
         <For each={props.task.subtasks}>
-          {(subt) => (
+          {(subtask) => (
             <ListItem>
               <Box>
-                <Text>{subt.subtask}</Text>
+                <Text>{subtask.action}</Text>
                 <Text size={"sm"} opacity="0.9">
-                  {subt.reason}
+                  ({subtask.reason})
                 </Text>
               </Box>
             </ListItem>
