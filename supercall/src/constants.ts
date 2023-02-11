@@ -7,7 +7,7 @@ export const summarizeMessagesUrl = `${rootEndpoint}/summarizeContent`;
 export const identifyScamsUrl = `${rootEndpoint}/identifyScam`;
 export const identifyTasksUrl = `${rootEndpoint}/identifyTasks`;
 export const identifyMeetingsUrl = `${rootEndpoint}/identifyMeetings`;
-export const identifyContentOfInterestUrl = `${rootEndpoint}/indentifyContentOfInterest`;
+export const identifyContentOfInterestUrl = `${rootEndpoint}/identifyContentOfInterests`;
 
 // Data endpoints
 export const getCallByKey = `${rootEndpoint}/getCallByKey`;

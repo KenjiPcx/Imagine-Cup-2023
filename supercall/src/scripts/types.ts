@@ -60,7 +60,7 @@ export type SummarizeResult = {
 };
 
 export type ContentOfInterest = {
-  topicOfInterest: string;
+  topic: string;
   content: string[];
 };
 
