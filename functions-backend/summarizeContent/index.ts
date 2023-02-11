@@ -15,17 +15,12 @@ const httpTrigger: AzureFunction = async function (
 
   const messages: string[] =
     req.query.messages || (req.body && req.body.messages);
+  const userInterests: string[] =
+    req.query.userInterests || (req.body && req.body.userInterests);
   // todo: get user interests
-  const userInterests = [];
+  // const userInterests = [];
 
   const prompt = generateSummarizeWithTopicsPrompt(messages, userInterests);
-  if (prompt.length > max_tokens - 300) {
-    context.res = {
-      status: 400,
-      body: "Messages are too long",
-    };
-    return;
-  }
 
   try {
     const response = await openai.createCompletion({
@@ -35,14 +30,16 @@ const httpTrigger: AzureFunction = async function (
       temperature: temperature,
     });
 
+    const answer = response.data.choices[0].text;
+
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body: response.data.choices[0].text,
+      body: answer,
     };
-  } catch {
+  } catch (err) {
     context.res = {
       status: 400,
-      body: "Messages are too long",
+      body: err,
     };
   }
 };
