@@ -1,61 +1,96 @@
-import { Button, Center, Flex, Heading, Text, VStack } from "@hope-ui/solid";
+import {
+  Button,
+  Center,
+  createDisclosure,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@hope-ui/solid";
 import axios from "axios";
-import { createEffect, createSignal, For, Show } from "solid-js";
+import { createEffect, createSignal, For, lazy, Show } from "solid-js";
 import { createStore } from "solid-js/store";
-import ActionsMenu from "../components/analysis/ActionsMenu";
-import AnalysisCard from "../components/analysis/AnalysisCard";
-import AnalyzeMessagesResultCard from "../components/analysis/AnalyzeMessagesResultCard";
-import MeetingsCard from "../components/analysis/MeetingsCard";
-import TasksCard from "../components/analysis/TasksCard";
-import MessagesStore from "../components/analysis/MessagesStore";
-import SummarizeMessagesCard from "../components/analysis/SummarizeMessageCard";
 import {
   analyzeMessagesUrl,
   identifyContentOfInterestUrl,
   identifyMeetingsUrl,
+  identifyScamsUrl,
   identifyTasksUrl,
   summarizeMessagesUrl,
 } from "../constants";
 import { initRecognizer } from "../scripts/azureAiHelpers";
+
 import {
-  DefaultAnalyzeMessagesResult,
-  DefaultContentOfInterests,
-  DefaultMeetings,
-  DefaultTaskResult,
-} from "../scripts/default";
-import { mockMessages, mockWarnings, mockMessages2 } from "../scripts/mockData";
-import { generateAnalyzeMessagesPrompt } from "../scripts/openAiHelper";
+  mockAnalyzeMessagesResult,
+  mockContentOfInterests,
+  mockMeetings,
+  mockMessages2,
+  mockMessages3,
+  mockScamDetectionResult,
+  mockSummary,
+  mockTaskResult,
+  mockUserInterests,
+} from "../scripts/mockData";
 import {
   AnalyzeMessagesResult,
   ContentOfInterest,
   Meeting,
+  ScamDetectionResult,
   Task,
 } from "../scripts/types";
 import ContentOfInterestCard from "../components/analysis/ContentOfInterestCard";
+import ScamDetectionResultsModal from "../components/analysis/ScamDetectionResultsModal";
+
+const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
+const AnalyzeMessagesResultCard = lazy(
+  () => import("../components/analysis/AnalyzeMessagesResultCard")
+);
+const MeetingsCard = lazy(() => import("../components/analysis/MeetingsCard"));
+const TasksCard = lazy(() => import("../components/analysis/TasksCard"));
+const MessagesStore = lazy(
+  () => import("../components/analysis/MessagesStore")
+);
+const SummarizeMessagesCard = lazy(
+  () => import("../components/analysis/SummarizeMessageCard")
+);
 
 const speechKey = import.meta.env.VITE_SPEECH_KEY as string;
 const speechRegion = import.meta.env.VITE_SPEECH_REGION as string;
+const defaultAnalyzeMessagesResult: AnalyzeMessagesResult = {
+  show: false,
+  hasTasksOrPotentialTasks: false,
+  hasBookingsOrAppointments: false,
+  topicsOfInterestsFound: [],
+};
+const defaultScamDetectionResult: ScamDetectionResult = {
+  isScam: false,
+  warnings: [],
+  advice: "",
+};
 
 export default function Home() {
   const [start, setStart] = createSignal(false);
-  const [messages, setMessages] = createSignal<string[]>(mockMessages2);
-
-  const [showAnalyzeMessageResults, setShowAnalyzeMessageResults] =
-    createSignal(true);
+  const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
-    DefaultAnalyzeMessagesResult
+    mockAnalyzeMessagesResult
   );
-  const [summaryResults, setSummaryResults] = createSignal(
-    "lorem ipsum dolor sit amet \n hello"
-  );
+  const [summaryResults, setSummaryResults] = createSignal("");
   const [meetingsDetectionRes, setMeetingsDetectionRes] =
-    createStore<Meeting[]>(DefaultMeetings);
+    createStore<Meeting[]>(mockMeetings);
   const [tasksDetectionRes, setTasksDetectionRes] =
-    createStore<Task[]>(DefaultTaskResult);
-  const [scamDetectionRes, setScamDetectionRes] = createStore<string[]>([]);
+    createStore<Task[]>(mockTaskResult);
+  const [scamDetectionRes, setScamDetectionRes] =
+    createStore<ScamDetectionResult>(mockScamDetectionResult);
+  const {
+    isOpen: isScamDetectionModalOpen,
+    onOpen: onScamDetectionModalOpen,
+    onClose: onScamDetectionModalClose,
+  } = createDisclosure();
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
-  >(DefaultContentOfInterests);
+  >(mockContentOfInterests);
+
+  createEffect(() => console.log(summaryResults()));
 
   const recognizer = initRecognizer(
     speechKey,
@@ -80,7 +115,9 @@ export default function Home() {
     try {
       const res = await axios.post(summarizeMessagesUrl, {
         messages: messages(),
+        userInterests: mockUserInterests,
       });
+      console.log(res.data);
       setSummaryResults(res.data as string);
     } catch (err) {
       console.log("error", err);
@@ -93,25 +130,22 @@ export default function Home() {
       const res = await axios.post(analyzeMessagesUrl, {
         messages: messages(),
       });
+      res.data.show = true;
       setAnalyzeMessagesResult(res.data as AnalyzeMessagesResult);
-      setShowAnalyzeMessageResults(true);
     } catch (err) {
       console.log("error", err);
     }
   };
 
-  const detectScamsAndShadyContent = () => {
+  const detectScamsAndShadyContent = async () => {
     console.log("Called detect scams and shady content");
-    let prompt = generateAnalyzeMessagesPrompt(messages());
-    // axios
-    //   .post(completionUrl, { prompt: JSON.stringify(prompt) })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     let detection: Detection = res.data;
-    //     setIsScam(detection.isScam);
-    //     setWarnings(detection.suspiciousContent);
-    //   })
-    //   .catch(console.warn);
+    try {
+      const res = await axios.post(identifyScamsUrl, { messages: messages() });
+      setScamDetectionRes(res.data as ScamDetectionResult);
+      onScamDetectionModalOpen();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const extractTasks = async () => {
@@ -169,7 +203,14 @@ export default function Home() {
     //   .catch(console.warn);
   };
 
-  const clearAll = () => {};
+  const clearMessagesAndReset = () => {
+    setMessages([]);
+    setAnalyzeMessagesResult(defaultAnalyzeMessagesResult);
+    setScamDetectionRes(defaultScamDetectionResult);
+    setTasksDetectionRes([]);
+    setMeetingsDetectionRes([]);
+    setContentOfInterests([]);
+  };
 
   return (
     <>
@@ -203,10 +244,7 @@ export default function Home() {
       </Flex>
 
       <VStack spacing="$6">
-        <AnalyzeMessagesResultCard
-          show={showAnalyzeMessageResults}
-          results={analyzeMessagesResult}
-        />
+        <AnalyzeMessagesResultCard results={analyzeMessagesResult} />
         <SummarizeMessagesCard summary={summaryResults} />
         <TasksCard tasksResults={tasksDetectionRes} />
         <MeetingsCard meetingsResults={meetingsDetectionRes} />
@@ -216,7 +254,26 @@ export default function Home() {
           </For>
         </Show>
       </VStack>
-      {/* <AnalysisResults isScam={isScam()} warnings={warnings()} /> */}
+
+      <Flex my="$6" justifyContent="space-evenly" wrap="wrap" rowGap="$5">
+        <Button size={"sm"} colorScheme="primary" onClick={saveCallInfo}>
+          Save Call
+        </Button>
+        <Button
+          size={"sm"}
+          colorScheme="danger"
+          onClick={clearMessagesAndReset}
+        >
+          Clear Messages
+        </Button>
+      </Flex>
+
+      <ScamDetectionResultsModal
+        isOpen={isScamDetectionModalOpen}
+        onOpen={onScamDetectionModalOpen}
+        onClose={onScamDetectionModalClose}
+        scamDetectionRes={scamDetectionRes}
+      />
     </>
   );
 }
