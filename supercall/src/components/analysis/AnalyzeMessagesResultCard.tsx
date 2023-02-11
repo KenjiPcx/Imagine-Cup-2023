@@ -1,15 +1,11 @@
-import { Box, Button, Flex, Heading, Text } from "@hope-ui/solid";
-import axios from "axios";
+import { Button, Flex } from "@hope-ui/solid";
 import { Show, For, Accessor } from "solid-js";
-import { identifyTasksUrl } from "../../constants";
-import { DefaultAnalyzeMessagesResult } from "../../scripts/default";
 import { AnalyzeMessagesResult } from "../../scripts/types";
 import AnalysisCard from "./AnalysisCard";
 import MessageBox from "./MessageBox";
 
 interface AnalyzeMessagesResultCardProps {
   results: Accessor<AnalyzeMessagesResult>;
-  show: Accessor<boolean>;
 }
 
 export default function AnalyzeMessagesResultCard(
@@ -32,7 +28,7 @@ export default function AnalyzeMessagesResultCard(
   };
 
   return (
-    <Show when={props.show()}>
+    <Show when={props.results().show}>
       <AnalysisCard heading="Analyze Message Results">
         <MessageBox
           message={generateAnalyzeMessagesResultMessage()}
