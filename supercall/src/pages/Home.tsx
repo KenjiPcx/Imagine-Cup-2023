@@ -81,7 +81,7 @@ const defaultScamDetectionResult: ScamDetectionResult = {
 };
 
 export default function Home() {
-  const [user] = createResource<clientPrincipal>(getUserInfo);
+  const [user] = createResource<clientPrincipal | null>(getUserInfo);
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
@@ -110,10 +110,6 @@ export default function Home() {
       setMessages((messages) => [...messages, result]);
     }
   );
-
-  createEffect(() => {
-    console.log(user);
-  });
 
   const startRecording = () => {
     recognizer.startContinuousRecognitionAsync();
@@ -156,7 +152,6 @@ export default function Home() {
   const analyzeMessagesForFurtherActions = async () => {
     const id = "analyze-messages";
     showLoadingNotificationForAiProcessing(id);
-    console.log("Called analyze messages");
     try {
       const res = await axios.post(analyzeMessagesUrl, {
         messages: messages(),
@@ -175,7 +170,6 @@ export default function Home() {
     showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyScamsUrl, { messages: messages() });
-      console.log(res.data);
       setScamDetectionRes(res.data as ScamDetectionResult);
       updateLoadingNotificationForSuccessfulJob(id);
       onScamDetectionModalOpen();

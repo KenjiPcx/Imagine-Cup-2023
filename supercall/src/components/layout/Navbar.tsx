@@ -13,14 +13,22 @@ import {
   Button,
   Anchor,
 } from "@hope-ui/solid";
-import { Link } from "@solidjs/router";
+import { Link, useNavigate } from "@solidjs/router";
 import { FiMenu } from "solid-icons/fi";
 import { createResource, Show } from "solid-js";
+import { loginUrl, logoutUrl } from "../../constants";
 import { getUserInfo } from "../../scripts/auth";
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = createDisclosure();
   const [user] = createResource(getUserInfo);
+  const navigate = useNavigate();
+  const login = () => {
+    navigate(loginUrl);
+  };
+  const logout = () => {
+    navigate(logoutUrl);
+  };
 
   return (
     <>
@@ -62,22 +70,14 @@ export default function Navbar() {
               <Show
                 when={user() === null}
                 fallback={
-                  <Anchor
-                    as={Button}
-                    mr="$3"
-                    href="/.auth/logout?post_logout_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/"
-                  >
+                  <Button mr="$3" onClick={login}>
                     Logout
-                  </Anchor>
+                  </Button>
                 }
               >
-                <Anchor
-                  as={Button}
-                  mr="$3"
-                  href="/.auth/login/github?post_login_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/"
-                >
+                <Button mr="$3" onClick={logout}>
                   Login
-                </Anchor>
+                </Button>
               </Show>
             </Box>
           </DrawerBody>
