@@ -1,8 +1,10 @@
 import { Box } from "@hope-ui/solid";
+import { JSXElement } from "solid-js";
 
 interface MessageBoxProps {
   message: string;
   alignment: "left" | "right" | "center";
+  children?: JSXElement;
 }
 
 export default function MessageBox(props: MessageBoxProps) {
@@ -18,6 +20,7 @@ export default function MessageBox(props: MessageBoxProps) {
       _last={{ mb: 0 }}
     >
       {props.message}
+      {props.children}
     </Box>
   );
 }
