@@ -1,5 +1,6 @@
-import { Box } from "@hope-ui/solid";
+import { Box, Button } from "@hope-ui/solid";
 import { Show, For } from "solid-js";
+import MessageBox from "./MessageBox";
 
 interface MessagesStoreProps {
   start: boolean;
@@ -26,17 +27,7 @@ export default function (props: MessagesStoreProps) {
       >
         <For each={props.messages}>
           {(message: string) => (
-            <Box
-              mb="$4"
-              py="$2"
-              px="$4"
-              outline="solid"
-              rounded="$sm"
-              _last={{ mb: 0 }}
-              class="first:mt-0 px-2 py-1 my-3 text-indigo-500 rounded-lg"
-            >
-              {message}
-            </Box>
+            <MessageBox message={message} alignment="left" />
           )}
         </For>
       </Show>
