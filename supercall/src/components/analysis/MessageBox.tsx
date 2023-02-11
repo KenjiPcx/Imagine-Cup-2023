@@ -3,7 +3,7 @@ import { JSXElement } from "solid-js";
 
 interface MessageBoxProps {
   message: string;
-  alignment: "left" | "right" | "center";
+  alignment?: "left" | "right" | "center";
   children?: JSXElement;
 }
 
@@ -15,7 +15,7 @@ export default function MessageBox(props: MessageBoxProps) {
       px="$4"
       rounded="$sm"
       h="fit-content"
-      textAlign={props.alignment}
+      textAlign={props.alignment || "left"}
       bgColor="$info8"
       _last={{ mb: 0 }}
     >
