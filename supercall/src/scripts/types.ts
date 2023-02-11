@@ -10,6 +10,7 @@ export type CallInfo = {
 };
 
 export type AnalyzeMessagesResult = {
+  show: boolean;
   hasTasksOrPotentialTasks: boolean;
   hasBookingsOrAppointments: boolean;
   topicsOfInterestsFound: string[];
@@ -23,7 +24,7 @@ export type ScamsDetectionResult = {
 export type Task = {
   goal: string;
   subtasks: {
-    subtask: string;
+    action: string;
     reason: string;
   }[];
 };
@@ -34,10 +35,11 @@ export type TasksDetectionResult = {
 
 export type Meeting = {
   title: string;
-  reasonToMeet: string;
-  participants: string;
-  datetime: Date;
-  location: string;
+  details?: string;
+  participants?: string;
+  date?: string;
+  time?: string;
+  location?: string;
 };
 
 export type MeetingsDetectionResult = {
@@ -60,4 +62,15 @@ export type SummarizeResult = {
 export type ContentOfInterest = {
   topicOfInterest: string;
   content: string[];
+};
+
+export type ShadyWarning = {
+  text: string;
+  reason: string;
+};
+
+export type ScamDetectionResult = {
+  isScam: boolean;
+  warnings: ShadyWarning[];
+  advice: string;
 };

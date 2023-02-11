@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@hope-ui/solid";
 import axios from "axios";
-import { createEffect, createSignal, For, lazy, Show } from "solid-js";
+import { createSignal, For, lazy, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   analyzeMessagesUrl,
@@ -23,12 +23,7 @@ import { initRecognizer } from "../scripts/azureAiHelpers";
 import {
   mockAnalyzeMessagesResult,
   mockContentOfInterests,
-  mockMeetings,
-  mockMessages2,
   mockMessages3,
-  mockScamDetectionResult,
-  mockSummary,
-  mockTaskResult,
   mockUserInterests,
 } from "../scripts/mockData";
 import {
@@ -40,6 +35,13 @@ import {
 } from "../scripts/types";
 import ContentOfInterestCard from "../components/analysis/ContentOfInterestCard";
 import ScamDetectionResultsModal from "../components/analysis/ScamDetectionResultsModal";
+import {
+  showLoadingNotification,
+  showLoadingNotificationForAiProcessing,
+  updateLoadingNotification,
+  updateLoadingNotificationForFailedJob,
+  updateLoadingNotificationForSuccessfulJob,
+} from "../scripts/notificationServiceHelper";
 
 const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
 const AnalyzeMessagesResultCard = lazy(
@@ -75,12 +77,12 @@ export default function Home() {
     mockAnalyzeMessagesResult
   );
   const [summaryResults, setSummaryResults] = createSignal("");
-  const [meetingsDetectionRes, setMeetingsDetectionRes] =
-    createStore<Meeting[]>(mockMeetings);
-  const [tasksDetectionRes, setTasksDetectionRes] =
-    createStore<Task[]>(mockTaskResult);
+  const [meetingsDetectionRes, setMeetingsDetectionRes] = createStore<
+    Meeting[]
+  >([]);
+  const [tasksDetectionRes, setTasksDetectionRes] = createStore<Task[]>([]);
   const [scamDetectionRes, setScamDetectionRes] =
-    createStore<ScamDetectionResult>(mockScamDetectionResult);
+    createStore<ScamDetectionResult>(defaultScamDetectionResult);
   const {
     isOpen: isScamDetectionModalOpen,
     onOpen: onScamDetectionModalOpen,
@@ -89,8 +91,6 @@ export default function Home() {
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
   >(mockContentOfInterests);
-
-  createEffect(() => console.log(summaryResults()));
 
   const recognizer = initRecognizer(
     speechKey,
@@ -102,29 +102,45 @@ export default function Home() {
 
   const startRecording = () => {
     recognizer.startContinuousRecognitionAsync();
+    showLoadingNotification(
+      "voice-recognizer",
+      "Started voice recognizer",
+      "Speak now and see your messages appear below",
+      "success"
+    );
     setStart(true);
   };
 
   const stopRecording = () => {
     recognizer.stopContinuousRecognitionAsync();
+    updateLoadingNotification(
+      "voice-recognizer",
+      "Stopped voice recognizer",
+      "Speech will no longer be recognized and added to the messages below",
+      "danger"
+    );
     setStart(false);
   };
 
   const summarizeMessages = async () => {
-    console.log("Called summarize messages");
+    const id = "summarize-messages";
+    showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(summarizeMessagesUrl, {
         messages: messages(),
         userInterests: mockUserInterests,
       });
-      console.log(res.data);
       setSummaryResults(res.data as string);
+      updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
-      console.log("error", err);
+      updateLoadingNotificationForFailedJob(id);
+      console.error(err);
     }
   };
 
   const analyzeMessagesForFurtherActions = async () => {
+    const id = "analyze-messages";
+    showLoadingNotificationForAiProcessing(id);
     console.log("Called analyze messages");
     try {
       const res = await axios.post(analyzeMessagesUrl, {
@@ -132,47 +148,61 @@ export default function Home() {
       });
       res.data.show = true;
       setAnalyzeMessagesResult(res.data as AnalyzeMessagesResult);
+      updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
-      console.log("error", err);
+      updateLoadingNotificationForFailedJob(id);
+      console.error(err);
     }
   };
 
   const detectScamsAndShadyContent = async () => {
-    console.log("Called detect scams and shady content");
+    const id = "detect-scams";
+    showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyScamsUrl, { messages: messages() });
+      console.log(res.data);
       setScamDetectionRes(res.data as ScamDetectionResult);
+      updateLoadingNotificationForSuccessfulJob(id);
       onScamDetectionModalOpen();
     } catch (err) {
+      updateLoadingNotificationForFailedJob(id);
       console.error(err);
     }
   };
 
   const extractTasks = async () => {
-    console.log("Called extract tasks");
+    const id = "extract-tasks";
+    showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyTasksUrl, {
         messages: messages(),
       });
-      setTasksDetectionRes(res.data as Task[]);
+      setTasksDetectionRes((prev) => [...prev, ...(res.data as Task[])]);
+      updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
-      console.warn(err);
+      updateLoadingNotificationForFailedJob(id);
+      console.error(err);
     }
   };
 
   const extractMeetings = async () => {
-    console.log("Called extract meetings");
+    const id = "extract-meetings";
+    showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyMeetingsUrl, {
         messages: messages(),
       });
-      setMeetingsDetectionRes(res.data as Meeting[]);
+      setMeetingsDetectionRes((prev) => [...prev, ...(res.data as Meeting[])]);
+      updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
-      console.warn(err);
+      updateLoadingNotificationForFailedJob(id);
+      console.error(err);
     }
   };
 
   const extractContentOfInterests = async (topicsOfInterest: string[]) => {
+    const id = "extract-content-of-interests";
+    showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyContentOfInterestUrl, {
         messages: messages(),
@@ -186,7 +216,9 @@ export default function Home() {
         (content) => !existingKeys.has(content.topicOfInterest)
       );
       setContentOfInterests((prev) => [...prev, ...filteredContent]);
+      updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
+      updateLoadingNotificationForFailedJob(id);
       console.error(err);
     }
   };

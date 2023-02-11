@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { HopeProvider } from "@hope-ui/solid";
+import { HopeProvider, NotificationsProvider } from "@hope-ui/solid";
 import { initAuth } from "./scripts/authConfig";
 import { hopeConfig } from "./scripts/hopeConfig";
 import Layout from "./components/layout/Layout";
@@ -10,9 +10,11 @@ const msalInstance = initAuth();
 const App: Component = () => {
   return (
     <HopeProvider config={hopeConfig}>
-      <Layout>
-        <Pages />
-      </Layout>
+      <NotificationsProvider placement={"top"}>
+        <Layout>
+          <Pages />
+        </Layout>
+      </NotificationsProvider>
     </HopeProvider>
   );
 };
