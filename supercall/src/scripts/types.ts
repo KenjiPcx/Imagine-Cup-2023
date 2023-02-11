@@ -74,3 +74,14 @@ export type ScamDetectionResult = {
   warnings: ShadyWarning[];
   advice: string;
 };
+
+export type clientPrincipal = {
+  identityProvider: string;
+  userId: string;
+  userDetails: string;
+  userRoles: string[];
+  claims: {
+    typ: string;
+    val: string;
+  }[];
+};

@@ -13,16 +13,14 @@ import {
   Button,
   Anchor,
 } from "@hope-ui/solid";
+import { Link } from "@solidjs/router";
 import { FiMenu } from "solid-icons/fi";
-import { Show } from "solid-js";
-// import { useIsAuthenticated } from "../auth/AuthProvider";
-import LoginBtn from "../auth/LoginBtn";
-import LogoutBtn from "../auth/LogoutBtn";
+import { createResource, Show } from "solid-js";
+import { getUserInfo } from "../../scripts/auth";
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = createDisclosure();
-  // const isAuthenticated = useIsAuthenticated();
-  let isAuthenticated = () => true;
+  const [user] = createResource(getUserInfo);
 
   return (
     <>
@@ -47,14 +45,39 @@ export default function Navbar() {
           <DrawerHeader>SuperCall Menu</DrawerHeader>
           <DrawerBody>
             <nav class="flex flex-col gap-2 mb-6">
-              <Anchor href="/">Analyze Call</Anchor>
-              <Anchor href="/about">About</Anchor>
-              <Anchor href="/call-history">Call History</Anchor>
-              <Anchor href="/profile">Profile</Anchor>
+              <Anchor as={Link} href="/">
+                Analyze Call
+              </Anchor>
+              <Anchor as={Link} href="/about">
+                About
+              </Anchor>
+              <Anchor as={Link} href="/call-history">
+                Call History
+              </Anchor>
+              <Anchor as={Link} href="/profile">
+                Profile
+              </Anchor>
             </nav>
             <Box mb="$4">
-              <Show when={isAuthenticated()} fallback={<LoginBtn />}>
-                <LogoutBtn />
+              <Show
+                when={user() === null}
+                fallback={
+                  <Anchor
+                    as={Button}
+                    mr="$3"
+                    href="/.auth/logout?post_logout_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/"
+                  >
+                    Logout
+                  </Anchor>
+                }
+              >
+                <Anchor
+                  as={Button}
+                  mr="$3"
+                  href="/.auth/login/github?post_login_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/"
+                >
+                  Login
+                </Anchor>
               </Show>
             </Box>
           </DrawerBody>

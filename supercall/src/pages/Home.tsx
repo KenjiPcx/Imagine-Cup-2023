@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Center,
   createDisclosure,
@@ -8,7 +9,14 @@ import {
   VStack,
 } from "@hope-ui/solid";
 import axios from "axios";
-import { createSignal, For, lazy, Show } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  For,
+  lazy,
+  Show,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   analyzeMessagesUrl,
@@ -28,6 +36,7 @@ import {
 } from "../scripts/mockData";
 import {
   AnalyzeMessagesResult,
+  clientPrincipal,
   ContentOfInterest,
   Meeting,
   ScamDetectionResult,
@@ -42,6 +51,7 @@ import {
   updateLoadingNotificationForFailedJob,
   updateLoadingNotificationForSuccessfulJob,
 } from "../scripts/notificationServiceHelper";
+import { getUserInfo } from "../scripts/auth";
 
 const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
 const AnalyzeMessagesResultCard = lazy(
@@ -71,6 +81,7 @@ const defaultScamDetectionResult: ScamDetectionResult = {
 };
 
 export default function Home() {
+  const [user] = createResource<clientPrincipal>(getUserInfo);
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
@@ -99,6 +110,10 @@ export default function Home() {
       setMessages((messages) => [...messages, result]);
     }
   );
+
+  createEffect(() => {
+    console.log(user);
+  });
 
   const startRecording = () => {
     recognizer.startContinuousRecognitionAsync();
@@ -246,6 +261,12 @@ export default function Home() {
 
   return (
     <>
+      <Show when={user() !== null} fallback={<Box>User not logged in</Box>}>
+        <Box>
+          User {user()?.userId} with details = {user()?.userDetails} is logged
+          in
+        </Box>
+      </Show>
       <Center mb="$6" flex={"auto"} flexDirection="column">
         <Heading size={"xl"}>Supercharge your calls</Heading>
         <Text size={"lg"}>Gain more insights</Text>
