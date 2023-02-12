@@ -1,3 +1,4 @@
+const root = "http://localhost:7071";
 const rootEndpoint = "http://localhost:7071/api";
 
 // AI endpoints
@@ -15,9 +16,9 @@ export const getAllCallByUserIdUrl = `${rootEndpoint}/getAllCalls`;
 export const saveCallUrl = `${rootEndpoint}/saveCall`;
 export const getUserAppSettingsUrl = `${rootEndpoint}/getUserAppSettings`;
 export const saveUserTopicsUrl = `${rootEndpoint}/saveTopicsOfInterestsForUser`;
+export const getAllTasksUrl = `${rootEndpoint}/getAllTasks`;
+export const getAllMeetingsUrl = `${rootEndpoint}/getAllMeetings`;
 
 // Auth endpoints
-export const loginUrl =
-  "/.auth/logout?post_logout_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/";
-export const logoutUrl =
-  "/.auth/login/github?post_login_redirect_uri=https://thankful-mushroom-0de6c9303.2.azurestaticapps.net/";
+export const loginUrl = `/.auth/logout?post_logout_redirect_uri=${root}/`;
+export const logoutUrl = `/.auth/login/github?post_login_redirect_uri=${root}/`;

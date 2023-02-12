@@ -1,6 +1,6 @@
-import { Center, Flex, Heading, Text } from "@hope-ui/solid";
+import { Center, Flex, Heading, Spinner, Text } from "@hope-ui/solid";
 import axios from "axios";
-import { createResource, createSignal, For, Show } from "solid-js";
+import { createResource, createSignal, For, Show, Suspense } from "solid-js";
 import CallInfoCard from "../components/productivity/CallInfoCard";
 import { getAllCallByUserIdUrl } from "../constants";
 import { getUserInfo } from "../scripts/auth";
@@ -24,6 +24,7 @@ export default function CallHistory() {
   // const [user] = createResource(getUserInfo);
   const [user, setUser] = createSignal(mockUser);
   const [calls] = createResource(user(), fetchCallsForUser);
+
   return (
     <>
       <Center mb="$6" flex={"auto"} flexDirection="column">
@@ -38,14 +39,28 @@ export default function CallHistory() {
         bgColor="$neutral6"
         rounded="$sm"
       >
-        <Show
-          when={calls() && calls().length > 0}
-          fallback={<Center w="$full">No calls found</Center>}
+        <Suspense
+          fallback={
+            <Center w="$full">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="$neutral4"
+                color="$info10"
+                size="xl"
+              />
+            </Center>
+          }
         >
-          <For each={calls()}>
-            {(call: CallItem) => <CallInfoCard call={call} />}
-          </For>
-        </Show>
+          <Show
+            when={calls() && calls().length > 0}
+            fallback={<Center w="$full">No calls found</Center>}
+          >
+            <For each={calls()}>
+              {(call: CallItem) => <CallInfoCard call={call} />}
+            </For>
+          </Show>
+        </Suspense>
       </Flex>
     </>
   );
