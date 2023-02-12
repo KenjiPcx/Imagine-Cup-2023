@@ -72,9 +72,9 @@ export default function Navbar() {
               <Anchor as={Link} href="/brain-dump">
                 Interests Brain Dump
               </Anchor>
-              <Anchor as={Link} href="/mental-notes">
+              {/* <Anchor as={Link} href="/mental-notes">
                 Mental Notes
-              </Anchor>
+              </Anchor> */}
             </nav>
             <Box mb="$4">
               <Show
