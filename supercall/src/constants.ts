@@ -13,6 +13,7 @@ export const identifyContentOfInterestUrl = `${rootEndpoint}/identifyContentOfIn
 export const getCallByKey = `${rootEndpoint}/getCallByKey`;
 export const getAllCallByUserId = `${rootEndpoint}/getAllCalls`;
 export const saveCallUrl = `${rootEndpoint}/saveCall`;
+export const getUserAppSettingsUrl = `${rootEndpoint}/getUserAppSettings`;
 
 // Auth endpoints
 export const loginUrl =
