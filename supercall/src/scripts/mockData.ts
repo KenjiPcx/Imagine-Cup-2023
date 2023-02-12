@@ -130,3 +130,11 @@ export const mockMessages3 = [
   // `Where are you thinking of going? I was thinking of going to Japan. What do you think? Japan sounds amazing! I've always wanted to visit there. How long is the trip? It's a two-week trip.`,
   // `Two weeks? That's a long time. Do you have the details of the trip? Yeah, I do. I've been doing some research, and I think we should book a package that includes everything from the flights to the accommodation.`,
 ];
+
+export const mockUser = {
+  userDetails: "kenjipcx",
+  userRoles: ["test"],
+  identityProvider: "test",
+  userId: "f62009ecfc354c1499137b8347884940",
+  claims: [],
+};

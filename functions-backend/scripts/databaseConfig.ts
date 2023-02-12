@@ -13,7 +13,7 @@ export const getDb = async () => {
 };
 
 export const getContainer = async (
-  containerName: "task" | "meetings" | "contentOfInterests" | "calls" | "users",
+  containerName: "tasks" | "meetings" | "contentOfInterests" | "calls" | "users",
   partitionKeyPaths = ["/userId"]
 ) => {
   const db = await getDb();

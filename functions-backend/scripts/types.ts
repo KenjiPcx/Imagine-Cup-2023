@@ -65,3 +65,13 @@ export type clientPrincipal = {
     val: string;
   }[];
 };
+
+export type CallItem = {
+  id: string;
+  summary: string;
+  userId: string;
+  tasksId?: string;
+  meetingsId?: string;
+  contentOfInterestsId?: string;
+  timestamp: Date;
+};

@@ -24,6 +24,7 @@ import {
   identifyMeetingsUrl,
   identifyScamsUrl,
   identifyTasksUrl,
+  saveCallUrl,
   summarizeMessagesUrl,
 } from "../constants";
 import { initRecognizer } from "../scripts/azureAiHelpers";
@@ -35,6 +36,7 @@ import {
 } from "../scripts/mockData";
 import {
   AnalyzeMessagesResult,
+  CallInfo,
   clientPrincipal,
   ContentOfInterest,
   Meeting,
@@ -85,11 +87,11 @@ const defaultScamDetectionResult: ScamDetectionResult = {
 };
 
 export default function Home() {
-  // const [user] = createResource<clientPrincipal | null>(getUserInfo);
+  const [user] = createResource<clientPrincipal | null>(getUserInfo);
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
-    mockAnalyzeMessagesResult
+    defaultAnalyzeMessagesResult
   );
   const [summaryResults, setSummaryResults] = createSignal("");
   const [meetingsDetectionRes, setMeetingsDetectionRes] = createStore<
@@ -236,16 +238,35 @@ export default function Home() {
     }
   };
 
-  const saveCallInfo = () => {
-    // axios
-    //   .post(completionUrl, { prompt: JSON.stringify(prompt) })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     let detection: Detection = res.data;
-    //     setIsScam(detection.isScam);
-    //     setWarnings(detection.suspiciousContent);
-    //   })
-    //   .catch(console.warn);
+  const saveCallInfo = async () => {
+    if (user() === null) {
+      console.log("User is not logged in");
+      return;
+    }
+    console.log(user());
+    const id = "save-call-info";
+    showLoadingNotificationForAiProcessing(id);
+    try {
+      if (summaryResults() !== "") {
+        await summarizeMessages();
+      }
+      const callInfo: CallInfo = {
+        summary: summaryResults(),
+        tasks: tasksDetectionRes,
+        meetings: meetingsDetectionRes,
+        contentOfInterests: contentOfInterests,
+        timestamp: new Date(),
+      };
+      await axios.post(saveCallUrl, {
+        userId: user()!.userId,
+        callInfo: callInfo,
+      });
+      updateLoadingNotificationForSuccessfulJob(id);
+      clearMessagesAndReset();
+    } catch (err) {
+      console.error(err);
+      updateLoadingNotificationForFailedJob(id);
+    }
   };
 
   const clearMessagesAndReset = () => {
@@ -259,12 +280,6 @@ export default function Home() {
 
   return (
     <>
-      {/* <Show when={user() !== null} fallback={<Box>User not logged in</Box>}>
-        <Box>
-          User {user()?.userId} with details = {user()?.userDetails} is logged
-          in
-        </Box>
-      </Show> */}
       <Center mb="$6" flex={"auto"} flexDirection="column">
         <Heading size={"xl"}>Supercharge your calls</Heading>
         <Text size={"lg"}>Gain more insights</Text>
