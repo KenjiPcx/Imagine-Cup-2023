@@ -15,17 +15,32 @@ import {
   IconButton,
   VStack,
   Spinner,
+  createDisclosure,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spacer,
 } from "@hope-ui/solid";
+import { IoRemoveCircle } from "solid-icons/io";
 import { createResource, createSignal, For, Show, Suspense } from "solid-js";
 import { Icon } from "@hope-ui/solid";
 import { AiOutlineGithub } from "solid-icons/ai";
-import { getUserAppSettingsUrl, loginUrl } from "../constants";
+import {
+  getUserAppSettingsUrl,
+  loginUrl,
+  saveUserTopicsUrl,
+} from "../constants";
 import { getUserInfo } from "../scripts/auth";
 import MessageBox from "../components/analysis/MessageBox";
 import { clientPrincipal } from "../scripts/types";
 import AnalysisCard from "../components/analysis/AnalysisCard";
 import { FaSolidPlus } from "solid-icons/fa";
 import axios from "axios";
+import RemoveTopicModal from "../components/profile/RemoveTopicModal";
 
 const fetchProfileData: (
   user: clientPrincipal | any
@@ -33,7 +48,9 @@ const fetchProfileData: (
   if (!user) {
     return [];
   }
-  // return ["test"];
+  return [
+    "test the size of this thing",
+  ];
   const res = await axios.post(getUserAppSettingsUrl, {
     userId: user.userId,
   });
@@ -56,21 +73,40 @@ export default function Profile() {
     user(),
     fetchProfileData
   );
-  // const user: () => clientPrincipal = () => {
-  //   return {
-  //     userDetails: "test",
-  //     userRoles: ["test"],
-  //     identityProvider: "test",
-  //     userId: "test",
-  //     claims: [],
-  //   };
-  // };
+  const { isOpen, onOpen, onClose } = createDisclosure();
+  const [topicToRemove, setTopicToRemove] = createSignal("");
 
   let newTopicInput: any;
   const addTopic = () => {
     if (topics) {
       mutate([...(topics() as string[]), newTopicInput.value]);
       newTopicInput.value = "";
+    }
+  };
+
+  const removeTopic = () => {
+    if (topics) {
+      mutate((topics() as string[]).filter((t) => t !== topicToRemove()));
+    }
+    onClose();
+  };
+
+  const openTopicRemovalModal = (topic: string) => {
+    setTopicToRemove(topic);
+    onOpen();
+  };
+
+  const saveUserTopics = () => {
+    if (user()) {
+      try {
+        axios.post(saveUserTopicsUrl, {
+          userId: user().userId,
+          topicsOfInterests: topics(),
+        });
+        refetch();
+      } catch (err) {
+        console.warn(err);
+      }
     }
   };
 
@@ -155,36 +191,58 @@ export default function Profile() {
                     </Flex>
                   }
                 >
-                  <Box>
+                  <Box mt="$4">
                     <For each={topics()}>
-                      {(topic) => <MessageBox message={topic} />}
+                      {(topic) => (
+                        <Box position="relative" w="95.5%" mb="$6">
+                          <MessageBox message={topic}>
+                            <Flex
+                              ml="$4"
+                              alignItems={"center"}
+                              position="absolute"
+                              right="0"
+                              top="50%"
+                              transform={"translateX(50%) translateY(-50%)"}
+                            >
+                              <IconButton
+                                aria-label={`remove ${topic}`}
+                                icon={<IoRemoveCircle />}
+                                colorScheme={"danger"}
+                                rounded="$3xl"
+                                onClick={() => openTopicRemovalModal(topic)}
+                                size="sm"
+                              />
+                            </Flex>
+                          </MessageBox>
+                        </Box>
+                      )}
                     </For>
                   </Box>
-                  <FormControl mt="$12" w="95%" mx="auto">
+                  <FormControl mt="$12" mx="auto">
                     <FormLabel for="Topic">Add a new topic 👇</FormLabel>
                     <Flex justifyContent={"center"} alignItems="center">
                       <Input
                         ref={newTopicInput}
                         id="Topic"
                         outline={"solid"}
-                        mr="$3"
-                        w="90%"
-                        onChange={() => console.log(newTopicInput.value)}
+                        flexGrow={1}
                       />
-                      <IconButton
-                        aria-label="Add new topic"
-                        icon={<FaSolidPlus />}
-                        size="sm"
-                        colorScheme={"success"}
-                        boxSize="$8"
-                        onClick={addTopic}
-                      >
-                        Plus
-                      </IconButton>
+                      <Flex ml="$3" alignItems={"center"}>
+                        <IconButton
+                          aria-label="Add new topic"
+                          icon={<FaSolidPlus />}
+                          size="sm"
+                          colorScheme={"success"}
+                          boxSize="$8"
+                          onClick={addTopic}
+                        >
+                          Plus
+                        </IconButton>
+                      </Flex>
                     </Flex>
                   </FormControl>
-                  <Center mt="$6">
-                    <Button mx="auto" size="sm">
+                  <Center mt="$8">
+                    <Button mx="auto" size="sm" onClick={saveUserTopics}>
                       Save Topics
                     </Button>
                   </Center>
@@ -194,6 +252,13 @@ export default function Profile() {
           </Show>
         </Flex>
       </Suspense>
+      <RemoveTopicModal
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        topicToRemove={topicToRemove}
+        removeTopic={removeTopic}
+      />
     </Box>
   );
 }

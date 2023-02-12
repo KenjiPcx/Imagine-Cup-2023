@@ -14,6 +14,7 @@ export const getCallByKey = `${rootEndpoint}/getCallByKey`;
 export const getAllCallByUserId = `${rootEndpoint}/getAllCalls`;
 export const saveCallUrl = `${rootEndpoint}/saveCall`;
 export const getUserAppSettingsUrl = `${rootEndpoint}/getUserAppSettings`;
+export const saveUserTopicsUrl = `${rootEndpoint}/saveTopicsOfInterestsForUser`;
 
 // Auth endpoints
 export const loginUrl =
