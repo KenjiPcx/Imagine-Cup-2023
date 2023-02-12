@@ -52,6 +52,7 @@ import {
   updateLoadingNotificationForSuccessfulJob,
 } from "../scripts/notificationServiceHelper";
 import { getUserInfo } from "../scripts/auth";
+import CustomExtractionModal from "../components/analysis/CustomExtractionModal";
 
 const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
 const AnalyzeMessagesResultCard = lazy(
@@ -104,6 +105,11 @@ export default function Home() {
     isOpen: isScamDetectionModalOpen,
     onOpen: onScamDetectionModalOpen,
     onClose: onScamDetectionModalClose,
+  } = createDisclosure();
+  const {
+    isOpen: isCustomExtractionModalOpen,
+    onOpen: onCustomExtractionModalOpen,
+    onClose: onCustomExtractionModalClose,
   } = createDisclosure();
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
@@ -306,6 +312,7 @@ export default function Home() {
           detectScamsAndShadyContent={detectScamsAndShadyContent}
           extractTasks={extractTasks}
           extractMeetings={extractMeetings}
+          openCustomExtractionModal={onCustomExtractionModalOpen}
         />
       </Flex>
 
@@ -334,8 +341,8 @@ export default function Home() {
         >
           Clear Messages
         </Button>
-        <Button size={"sm"} colorScheme="primary" onClick={saveCallInfo}>
-          Save Call
+        <Button size={"sm"} colorScheme="success" onClick={saveCallInfo}>
+          Save Conversation Details
         </Button>
       </Flex>
 
@@ -344,6 +351,13 @@ export default function Home() {
         onOpen={onScamDetectionModalOpen}
         onClose={onScamDetectionModalClose}
         scamDetectionRes={scamDetectionRes}
+      />
+
+      <CustomExtractionModal
+        isOpen={isCustomExtractionModalOpen}
+        onOpen={onCustomExtractionModalOpen}
+        onClose={onCustomExtractionModalClose}
+        messages={messages}
       />
     </>
   );

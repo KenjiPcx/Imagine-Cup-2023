@@ -59,3 +59,12 @@ export const generateSummarizeWithTopicsPrompt = (
   
   The dialog is as follows: "${messages.join(" ")}"`;
 };
+
+export const generateCustomExtractionPrompt = (
+  messages: string[],
+  prompt: string
+) => {
+  return `Based on this dialog: "${messages.join(" ")}"
+  
+  ${prompt}`;
+};
