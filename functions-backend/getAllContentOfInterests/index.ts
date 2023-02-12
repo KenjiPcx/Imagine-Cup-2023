@@ -5,14 +5,17 @@ const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  context.log("Get all tasks function processed a request.");
+  context.log("Get all content of interests function processed a request.");
 
   const userId = req.query.userId || (req.body && req.body.userId);
 
   try {
-    const tasksContainer = await getContainer("tasks", ["/userId"]);
+    const contentOfInterestsContainer = await getContainer(
+      "contentOfInterests",
+      ["/userId"]
+    );
     const querySpec = {
-      query: "select * from tasks t where t.userId=@userId",
+      query: `select * from contentOfInterests c where c.userId=@userId`,
       parameters: [
         {
           name: "@userId",
@@ -20,16 +23,15 @@ const httpTrigger: AzureFunction = async function (
         },
       ],
     };
-    const { resources } = await tasksContainer.items
+    const { resources } = await contentOfInterestsContainer.items
       .query(querySpec)
       .fetchAll();
     context.log(`Read item:`, resources);
 
-    const tasks = resources.map((r) => r.tasks).flat();
-
+    const body = resources.map((r) => r.contentOfInterests).flat();
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body: tasks,
+      body: body,
     };
   } catch (err) {
     context.res = {

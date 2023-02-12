@@ -17,9 +17,7 @@ const fetchMeetingsForUser = async (user: clientPrincipal | null) => {
   });
   console.log(res.data);
 
-  const meetings = (res.data as any[]).map((rec) => rec.meetings).flat();
-  console.log(meetings);
-  return meetings;
+  return res.data as Meeting[];
 };
 
 export default function AllMeetings() {

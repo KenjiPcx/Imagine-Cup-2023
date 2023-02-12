@@ -25,9 +25,11 @@ const httpTrigger: AzureFunction = async function (
       .fetchAll();
     context.log(`Read item:`, resources);
 
+    const body = resources.map((r) => r.meetings).flat();
+
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body: resources,
+      body: body,
     };
   } catch (err) {
     context.res = {

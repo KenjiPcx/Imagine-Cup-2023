@@ -17,9 +17,7 @@ const fetchTasksForUser = async (user: clientPrincipal | null) => {
   });
   console.log(res.data);
 
-  const tasks = (res.data as any[]).map((rec) => rec.tasks).flat();
-  console.log(tasks);
-  return tasks;
+  return res.data as Task[];
 };
 
 export default function AllTasks() {
