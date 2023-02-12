@@ -4,43 +4,36 @@ import {
   Center,
   Heading,
   Text,
-  Anchor,
   Button,
   Flex,
-  UnorderedList,
-  ListItem,
   FormControl,
   FormLabel,
   Input,
   IconButton,
-  VStack,
-  Spinner,
   createDisclosure,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spacer,
 } from "@hope-ui/solid";
-import { IoRemoveCircle } from "solid-icons/io";
-import { createResource, createSignal, For, Show, Suspense } from "solid-js";
-import { Icon } from "@hope-ui/solid";
-import { AiOutlineGithub } from "solid-icons/ai";
 import {
-  getUserAppSettingsUrl,
-  loginUrl,
-  saveUserTopicsUrl,
-} from "../constants";
+  createResource,
+  createSignal,
+  For,
+  lazy,
+  Show,
+  Suspense,
+} from "solid-js";
+import { getUserAppSettingsUrl, saveUserTopicsUrl } from "../constants";
 import { getUserInfo } from "../scripts/auth";
-import MessageBox from "../components/analysis/MessageBox";
 import { clientPrincipal } from "../scripts/types";
 import AnalysisCard from "../components/analysis/AnalysisCard";
 import { FaSolidPlus } from "solid-icons/fa";
 import axios from "axios";
 import RemoveTopicModal from "../components/profile/RemoveTopicModal";
+import TopicsBox from "../components/profile/TopicsBox";
+import AuthorizedUserCard from "../components/profile/AuthorizedUserCard";
+
+const AnonUserCard = lazy(() => import("../components/profile/AnonUserCard"));
+const TopicsFallbackCard = lazy(
+  () => import("../components/profile/TopicsFallbackCard")
+);
 
 const fetchProfileData: (
   user: clientPrincipal | any
@@ -48,9 +41,7 @@ const fetchProfileData: (
   if (!user) {
     return [];
   }
-  return [
-    "test the size of this thing",
-  ];
+  return ["test the size of this thing"];
   const res = await axios.post(getUserAppSettingsUrl, {
     userId: user.userId,
   });
@@ -66,6 +57,7 @@ const defUser = {
   userId: "f62009ecfc354c1499137b8347884940",
   claims: [],
 };
+
 export default function Profile() {
   // const [user] = createResource<clientPrincipal | null>(getUserInfo);
   const [user, setUser] = createSignal(defUser);
@@ -119,102 +111,20 @@ export default function Profile() {
         </Center>
 
         <Flex flexDirection={"column"} alignItems="center" gap="$8">
-          <Show
-            when={user() !== null}
-            fallback={
-              <>
-                <Avatar size={"2xl"} name="U" src="broken-link" />
-                <Box w={"80%"}>
-                  <MessageBox
-                    message={"You need to login to view your profile"}
-                  >
-                    <Heading mt="$2">Loging in will also allow you to</Heading>
-                    <UnorderedList>
-                      <ListItem>Add Personalization</ListItem>
-                      <ListItem>Save Calls</ListItem>
-                      <ListItem>View Call History</ListItem>
-                      <ListItem>
-                        Access your personal knowledge dump bank
-                      </ListItem>
-                    </UnorderedList>
-                  </MessageBox>
-                </Box>
-                <Anchor href={loginUrl}>
-                  <Button colorScheme={"info"}>
-                    <Icon as={AiOutlineGithub} mr="$2" boxSize="$6" />
-                    Login with GitHub
-                  </Button>
-                </Anchor>
-              </>
-            }
-          >
-            <Avatar
-              size={"2xl"}
-              name={user()?.userDetails || "Default Username"}
-              src="broken-link"
-            />
+          <Show when={user() !== null} fallback={<AnonUserCard />}>
+            <AuthorizedUserCard user={user} />
 
-            <Box
-              bgColor={"$info8"}
-              px="$3"
-              py="$2"
-              rounded={"$md"}
-              w="85%"
-              textAlign={"center"}
-            >
-              <Heading size={"lg"} mt="$2">
-                UserId: {user().userId}
-              </Heading>
-              <Heading size={"lg"} my="$2">
-                Username: {user().userDetails}
-              </Heading>
-            </Box>
-
+            {/* <Heading>Todo: Refactor list</Heading> */}
             <Box w="85%">
               <AnalysisCard heading={"Topics of interests list"}>
-                <Suspense
-                  fallback={
-                    <Flex
-                      my="$16"
-                      flexDirection={"column"}
-                      justifyContent="center"
-                      alignItems="center"
-                    >
-                      <Spinner
-                        thickness="4px"
-                        speed="0.65s"
-                        emptyColor="$neutral4"
-                        color="$info10"
-                        size="xl"
-                      />
-                      <Heading mt="$4">Loading topics of interests...</Heading>
-                    </Flex>
-                  }
-                >
+                <Suspense fallback={<TopicsFallbackCard />}>
                   <Box mt="$4">
                     <For each={topics()}>
                       {(topic) => (
-                        <Box position="relative" w="95.5%" mb="$6">
-                          <MessageBox message={topic}>
-                            <Flex
-                              ml="$4"
-                              alignItems={"center"}
-                              position="absolute"
-                              right="0"
-                              top="50%"
-                              transform={"translateX(50%) translateY(-50%)"}
-                            >
-                              <IconButton
-                                aria-label={`remove ${topic}`}
-                                icon={<IoRemoveCircle />}
-                                colorScheme={"danger"}
-                                rounded="$3xl"
-                                onClick={() => openTopicRemovalModal(topic)}
-                                size="sm"
-                              />
-                            </Flex>
-                          </MessageBox>
-                        </Box>
+                        <TopicsBox
+                          topic={topic}
+                          openTopicRemovalModal={openTopicRemovalModal}
+                        />
                       )}
                     </For>
                   </Box>
