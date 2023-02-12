@@ -24,5 +24,5 @@ export const addMentalNote = `${rootEndpoint}/addMentalNote`;
 export const getAllMentalNotes = `${rootEndpoint}/getAllMentalNotes`;
 
 // Auth endpoints
-export const loginUrl = `/.auth/logout?post_logout_redirect_uri=${root}/`;
-export const logoutUrl = `/.auth/login/github?post_login_redirect_uri=${root}/`;
+export const loginUrl = `/.auth/login/github?post_login_redirect_uri=${root}/`;
+export const logoutUrl = `/.auth/logout?post_logout_redirect_uri=${root}/`;
