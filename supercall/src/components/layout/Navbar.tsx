@@ -13,7 +13,7 @@ import {
   Button,
   Anchor,
 } from "@hope-ui/solid";
-import { Link, useNavigate } from "@solidjs/router";
+import { Link } from "@solidjs/router";
 import { FiMenu } from "solid-icons/fi";
 import { createResource, Show } from "solid-js";
 import { loginUrl, logoutUrl } from "../../constants";
@@ -22,21 +22,16 @@ import { getUserInfo } from "../../scripts/auth";
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = createDisclosure();
   const [user] = createResource(getUserInfo);
-  const navigate = useNavigate();
-  const login = () => {
-    navigate(loginUrl);
-  };
-  const logout = () => {
-    navigate(logoutUrl);
-  };
 
   return (
     <>
       <Flex w="$full" p="$3" alignItems="center">
         <Box>
-          <Heading size="xl" fontWeight="$bold" pl="$2">
-            SuperCall
-          </Heading>
+          <Anchor href="/">
+            <Heading size="xl" fontWeight="$bold" pl="$2">
+              Chatnalysis
+            </Heading>
+          </Anchor>
         </Box>
         <Spacer />
         <IconButton
@@ -50,7 +45,7 @@ export default function Navbar() {
       <Drawer opened={isOpen()} placement={"top"} onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader>SuperCall Menu</DrawerHeader>
+          <DrawerHeader>Chatnalysis Menu</DrawerHeader>
           <DrawerBody>
             <nav class="flex flex-col gap-2 mb-6">
               <Anchor as={Link} href="/">
@@ -59,25 +54,47 @@ export default function Navbar() {
               <Anchor as={Link} href="/about">
                 About
               </Anchor>
-              <Anchor as={Link} href="/call-history">
-                Call History
-              </Anchor>
               <Anchor as={Link} href="/profile">
                 Profile
               </Anchor>
+              <Show when={user()}>
+                <Anchor as={Link} href="/call-history">
+                  Call History
+                </Anchor>
+                <Heading
+                  flex={1}
+                  mt="$4"
+                  fontWeight="$medium"
+                  textAlign="start"
+                >
+                  Productivity
+                </Heading>
+                <Anchor as={Link} href="/tasks">
+                  Tasks
+                </Anchor>
+                <Anchor as={Link} href="/meetings">
+                  Meetings
+                </Anchor>
+                <Anchor as={Link} href="/brain-dump">
+                  Interests Brain Dump
+                </Anchor>
+                {/* <Anchor as={Link} href="/mental-notes">
+                Mental Notes
+              </Anchor> */}
+              </Show>
             </nav>
             <Box mb="$4">
               <Show
                 when={user() === null}
                 fallback={
-                  <Button mr="$3" onClick={login}>
-                    Logout
-                  </Button>
+                  <Anchor href={logoutUrl}>
+                    <Button mr="$3">Logout</Button>
+                  </Anchor>
                 }
               >
-                <Button mr="$3" onClick={logout}>
-                  Login
-                </Button>
+                <Anchor href={loginUrl}>
+                  <Button mr="$3">Login</Button>
+                </Anchor>
               </Show>
             </Box>
           </DrawerBody>

@@ -28,12 +28,7 @@ export const mockAnalyzeMessagesResult: AnalyzeMessagesResult = {
   show: true,
   hasTasksOrPotentialTasks: true,
   hasBookingsOrAppointments: true,
-  topicsOfInterestsFound: [
-    "topic 1 test with long words",
-    "microsoft",
-    "topic 2",
-    "abc",
-  ],
+  topicsOfInterestsFound: ["books to read", "places to visit"],
 };
 
 export const mockTaskResult: Task[] = [
@@ -68,27 +63,27 @@ export const mockTaskResult: Task[] = [
 export const mockMeetings: Meeting[] = [
   {
     title: "Run in park",
-    datetime: new Date(),
+    date: "new Date(),",
+    time: "new Date(),",
     location: "park",
-    reasonToMeet: "run in park",
     participants: "kn and je",
   },
   {
     title: "Joji concert",
-    datetime: new Date(),
+    date: "new Date(),",
+    time: "new Date(),",
     location: "park",
-    reasonToMeet: "run in park",
     participants: "kn and je",
   },
 ];
 
 export const mockContentOfInterests: ContentOfInterest[] = [
   {
-    topicOfInterest: "Anime to watch",
+    topic: "Anime to watch",
     content: ["my hero", "gibiate", "gleipnir"],
   },
   {
-    topicOfInterest: "World affairs",
+    topic: "World affairs",
     content: ["Malaysia growth 8%", "Andrew tate arrewsted", "Fifa world cup"],
   },
 ];
@@ -134,4 +129,19 @@ export const mockMessages3 = [
   // `I'll have to check that out. Definitely. So, what's on your mind today? I was thinking about visiting some new places. I need a break from the usual routine. Me too! I'm in.`,
   // `Where are you thinking of going? I was thinking of going to Japan. What do you think? Japan sounds amazing! I've always wanted to visit there. How long is the trip? It's a two-week trip.`,
   // `Two weeks? That's a long time. Do you have the details of the trip? Yeah, I do. I've been doing some research, and I think we should book a package that includes everything from the flights to the accommodation.`,
+];
+
+export const mockUser = {
+  userDetails: "kenjipcx",
+  userRoles: ["test"],
+  identityProvider: "test",
+  userId: "f62009ecfc354c1499137b8347884940",
+  claims: [],
+};
+
+export const mockMessages4 = [
+  "Have you heard about this new app called SuperCall? It's amazing!",
+  "It extracts important information from your conversations, like tasks, meetings, and even topics that interest you. I used it to extract a list of action items from our team call yesterday. It saved me so much time!",
+  "Wow, that sounds really useful. I always forget the important details after a call.",
+  "Yeah, me too. And the best part is, you can even use the GPT terminal feature to ask questions about the conversation. It's like having your own personal assistant.",
 ];

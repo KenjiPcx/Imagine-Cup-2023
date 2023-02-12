@@ -12,7 +12,7 @@ export default function ContentOfInterestCard(
 ) {
   return (
     <AnalysisCard
-      heading={`Extracted ${props.contentOfInterest.topicOfInterest}`}
+      heading={`Extracted ${props.contentOfInterest.topic}`}
     >
       <For each={props.contentOfInterest.content}>
         {(content) => <MessageBox message={content} alignment="left" />}

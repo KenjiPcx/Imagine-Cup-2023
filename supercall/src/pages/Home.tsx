@@ -24,10 +24,10 @@ import {
   identifyMeetingsUrl,
   identifyScamsUrl,
   identifyTasksUrl,
+  saveCallUrl,
   summarizeMessagesUrl,
 } from "../constants";
 import { initRecognizer } from "../scripts/azureAiHelpers";
-
 import {
   mockAnalyzeMessagesResult,
   mockContentOfInterests,
@@ -36,14 +36,14 @@ import {
 } from "../scripts/mockData";
 import {
   AnalyzeMessagesResult,
+  CallInfo,
   clientPrincipal,
   ContentOfInterest,
   Meeting,
   ScamDetectionResult,
   Task,
 } from "../scripts/types";
-import ContentOfInterestCard from "../components/analysis/ContentOfInterestCard";
-import ScamDetectionResultsModal from "../components/analysis/ScamDetectionResultsModal";
+
 import {
   showLoadingNotification,
   showLoadingNotificationForAiProcessing,
@@ -52,6 +52,7 @@ import {
   updateLoadingNotificationForSuccessfulJob,
 } from "../scripts/notificationServiceHelper";
 import { getUserInfo } from "../scripts/auth";
+import CustomExtractionModal from "../components/analysis/CustomExtractionModal";
 
 const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
 const AnalyzeMessagesResultCard = lazy(
@@ -64,6 +65,12 @@ const MessagesStore = lazy(
 );
 const SummarizeMessagesCard = lazy(
   () => import("../components/analysis/SummarizeMessageCard")
+);
+const ScamDetectionResultsModal = lazy(
+  () => import("../components/analysis/ScamDetectionResultsModal")
+);
+const ContentOfInterestCard = lazy(
+  () => import("../components/analysis/ContentOfInterestCard")
 );
 
 const speechKey = import.meta.env.VITE_SPEECH_KEY as string;
@@ -85,7 +92,7 @@ export default function Home() {
   const [start, setStart] = createSignal(false);
   const [messages, setMessages] = createSignal<string[]>(mockMessages3);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
-    mockAnalyzeMessagesResult
+    defaultAnalyzeMessagesResult
   );
   const [summaryResults, setSummaryResults] = createSignal("");
   const [meetingsDetectionRes, setMeetingsDetectionRes] = createStore<
@@ -99,9 +106,14 @@ export default function Home() {
     onOpen: onScamDetectionModalOpen,
     onClose: onScamDetectionModalClose,
   } = createDisclosure();
+  const {
+    isOpen: isCustomExtractionModalOpen,
+    onOpen: onCustomExtractionModalOpen,
+    onClose: onCustomExtractionModalClose,
+  } = createDisclosure();
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
-  >(mockContentOfInterests);
+  >([]);
 
   const recognizer = initRecognizer(
     speechKey,
@@ -155,8 +167,10 @@ export default function Home() {
     try {
       const res = await axios.post(analyzeMessagesUrl, {
         messages: messages(),
+        userInterests: mockUserInterests,
       });
       res.data.show = true;
+      console.log(res.data);
       setAnalyzeMessagesResult(res.data as AnalyzeMessagesResult);
       updateLoadingNotificationForSuccessfulJob(id);
     } catch (err) {
@@ -209,20 +223,18 @@ export default function Home() {
     }
   };
 
-  const extractContentOfInterests = async (topicsOfInterest: string[]) => {
-    const id = "extract-content-of-interests";
+  const extractContentOfInterests = async (topicsOfInterests: string[]) => {
+    const id = `extract-content-of-interests-${topicsOfInterests.join("-")}}`;
     showLoadingNotificationForAiProcessing(id);
     try {
       const res = await axios.post(identifyContentOfInterestUrl, {
         messages: messages(),
-        topicsOfInterest: topicsOfInterest,
+        topicsOfInterests: topicsOfInterests,
       });
       const newContent = res.data as ContentOfInterest[];
-      const existingKeys = new Set(
-        contentOfInterests.map((c) => c.topicOfInterest)
-      );
+      const existingKeys = new Set(contentOfInterests.map((c) => c.topic));
       const filteredContent = newContent.filter(
-        (content) => !existingKeys.has(content.topicOfInterest)
+        (content) => !existingKeys.has(content.topic)
       );
       setContentOfInterests((prev) => [...prev, ...filteredContent]);
       updateLoadingNotificationForSuccessfulJob(id);
@@ -232,16 +244,35 @@ export default function Home() {
     }
   };
 
-  const saveCallInfo = () => {
-    // axios
-    //   .post(completionUrl, { prompt: JSON.stringify(prompt) })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     let detection: Detection = res.data;
-    //     setIsScam(detection.isScam);
-    //     setWarnings(detection.suspiciousContent);
-    //   })
-    //   .catch(console.warn);
+  const saveCallInfo = async () => {
+    if (user() === null) {
+      console.log("User is not logged in");
+      return;
+    }
+    console.log(user());
+    const id = "save-call-info";
+    showLoadingNotificationForAiProcessing(id);
+    try {
+      if (summaryResults() === "") {
+        await summarizeMessages();
+      }
+      const callInfo: CallInfo = {
+        summary: summaryResults(),
+        tasks: tasksDetectionRes,
+        meetings: meetingsDetectionRes,
+        contentOfInterests: contentOfInterests,
+        timestamp: Date.now(),
+      };
+      await axios.post(saveCallUrl, {
+        userId: user()!.userId,
+        callInfo: callInfo,
+      });
+      updateLoadingNotificationForSuccessfulJob(id);
+      clearMessagesAndReset();
+    } catch (err) {
+      console.error(err);
+      updateLoadingNotificationForFailedJob(id);
+    }
   };
 
   const clearMessagesAndReset = () => {
@@ -255,12 +286,6 @@ export default function Home() {
 
   return (
     <>
-      <Show when={user() !== null} fallback={<Box>User not logged in</Box>}>
-        <Box>
-          User {user()?.userId} with details = {user()?.userDetails} is logged
-          in
-        </Box>
-      </Show>
       <Center mb="$6" flex={"auto"} flexDirection="column">
         <Heading size={"xl"}>Supercharge your calls</Heading>
         <Text size={"lg"}>Gain more insights</Text>
@@ -287,11 +312,17 @@ export default function Home() {
           detectScamsAndShadyContent={detectScamsAndShadyContent}
           extractTasks={extractTasks}
           extractMeetings={extractMeetings}
+          openCustomExtractionModal={onCustomExtractionModalOpen}
         />
       </Flex>
 
-      <VStack spacing="$6">
-        <AnalyzeMessagesResultCard results={analyzeMessagesResult} />
+      <VStack spacing="$6" mb="$4">
+        <AnalyzeMessagesResultCard
+          results={analyzeMessagesResult}
+          extractTasks={extractTasks}
+          extractMeetings={extractMeetings}
+          extractContentOfInterests={extractContentOfInterests}
+        />
         <SummarizeMessagesCard summary={summaryResults} />
         <TasksCard tasksResults={tasksDetectionRes} />
         <MeetingsCard meetingsResults={meetingsDetectionRes} />
@@ -302,16 +333,16 @@ export default function Home() {
         </Show>
       </VStack>
 
-      <Flex my="$6" justifyContent="space-evenly" wrap="wrap" rowGap="$5">
-        <Button size={"sm"} colorScheme="primary" onClick={saveCallInfo}>
-          Save Call
-        </Button>
+      <Flex my="$2" justifyContent="center" flexDirection="column" rowGap="$3">
         <Button
           size={"sm"}
           colorScheme="danger"
           onClick={clearMessagesAndReset}
         >
           Clear Messages
+        </Button>
+        <Button size={"sm"} colorScheme="success" onClick={saveCallInfo}>
+          Save Conversation Details
         </Button>
       </Flex>
 
@@ -320,6 +351,13 @@ export default function Home() {
         onOpen={onScamDetectionModalOpen}
         onClose={onScamDetectionModalClose}
         scamDetectionRes={scamDetectionRes}
+      />
+
+      <CustomExtractionModal
+        isOpen={isCustomExtractionModalOpen}
+        onOpen={onCustomExtractionModalOpen}
+        onClose={onCustomExtractionModalClose}
+        messages={messages}
       />
     </>
   );

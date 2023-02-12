@@ -1,31 +1,24 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import {
   max_tokens,
-  openai,
   model,
+  openai,
   temperature,
 } from "../scripts/openAIConfig";
-import { generateExtractContentByInterestsPrompt } from "../scripts/prompts";
+import { generateCustomExtractionPrompt } from "../scripts/prompts";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  context.log(
-    "Identify Content of Interests HTTP trigger function processed a request."
-  );
-
+  context.log("Custom extraction command function processed a request.");
   const messages: string[] =
     req.query.messages || (req.body && req.body.messages);
 
   // todo: get user interests
-  const topicsOfInterests: string[] =
-    req.query.topicsOfInterests || (req.body && req.body.topicsOfInterests);
+  const userPrompt = req.query.prompt || (req.body && req.body.userPrompt);
 
-  const prompt = generateExtractContentByInterestsPrompt(
-    messages,
-    topicsOfInterests
-  );
+  const prompt = generateCustomExtractionPrompt(messages, userPrompt);
 
   try {
     const response = await openai.createCompletion({
@@ -35,12 +28,12 @@ const httpTrigger: AzureFunction = async function (
       temperature: temperature,
     });
 
-    const body = JSON.parse(response.data.choices[0].text);
+    const body = response.data.choices[0].text;
     context.log(body);
-    
+
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body: body.topics,
+      body: body,
     };
   } catch (err) {
     context.res = {

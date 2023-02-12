@@ -16,6 +16,7 @@ interface ActionsMenuProps {
   detectScamsAndShadyContent: () => void;
   extractTasks: () => void;
   extractMeetings: () => void;
+  openCustomExtractionModal: () => void;
 }
 
 export default function ActionsMenu(props: ActionsMenuProps) {
@@ -51,7 +52,13 @@ export default function ActionsMenu(props: ActionsMenuProps) {
             colorScheme="accent"
             onSelect={props.analyzeMessagesForFurtherActions}
           >
-            Analyze Messages For Further Actions
+            Analyze For Interests
+          </MenuItem>
+          <MenuItem
+            colorScheme="neutral"
+            onSelect={props.openCustomExtractionModal}
+          >
+            Open GPT interface
           </MenuItem>
         </MenuGroup>
       </MenuContent>

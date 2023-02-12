@@ -40,7 +40,7 @@ export const generateExtractContentByInterestsPrompt = (
   return `From this dialog, extract all the content with regards to these topics of interests: [${topics.join(
     ", "
   )}]. Return all of the content grouped by topic in json with this type 
-    { topics: { topic: string; content: string[]; }[]; }
+    { "topics": { "topic": string, "content": string[] }[] }
     
     The dialog is as follows: "${messages.join(" ")}"`;
 };
@@ -58,4 +58,13 @@ export const generateSummarizeWithTopicsPrompt = (
   }
   
   The dialog is as follows: "${messages.join(" ")}"`;
+};
+
+export const generateCustomExtractionPrompt = (
+  messages: string[],
+  prompt: string
+) => {
+  return `Based on this dialog: "${messages.join(" ")}"
+  
+  ${prompt}`;
 };

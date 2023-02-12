@@ -1,4 +1,4 @@
-import { Box, Button } from "@hope-ui/solid";
+import { Box, Flex, Heading, Text } from "@hope-ui/solid";
 import { Show, For } from "solid-js";
 import MessageBox from "./MessageBox";
 
@@ -19,10 +19,16 @@ export default function (props: MessagesStoreProps) {
       <Show
         when={props.start || props.messages.length > 0}
         fallback={
-          <Box class="flex flex-col justify-center items-center h-full p-4 text-center">
-            <p>No messages yet</p>
-            <p>Start a recording!</p>
-          </Box>
+          <Flex
+            flexDirection={"column"}
+            alignItems="center"
+            justifyContent={"center"}
+            h="60vh"
+            p="$2"
+          >
+            <Heading>No messages yet</Heading>
+            <Text>Start a recording!</Text>
+          </Flex>
         }
       >
         <For each={props.messages}>
