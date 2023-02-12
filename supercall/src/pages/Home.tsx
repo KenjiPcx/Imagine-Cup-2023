@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   createDisclosure,
@@ -9,14 +8,7 @@ import {
   VStack,
 } from "@hope-ui/solid";
 import axios from "axios";
-import {
-  createEffect,
-  createResource,
-  createSignal,
-  For,
-  lazy,
-  Show,
-} from "solid-js";
+import { createResource, createSignal, For, lazy, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   analyzeMessagesUrl,
@@ -32,6 +24,7 @@ import {
   mockAnalyzeMessagesResult,
   mockContentOfInterests,
   mockMessages3,
+  mockMessages4,
   mockUserInterests,
 } from "../scripts/mockData";
 import {
@@ -90,7 +83,7 @@ const defaultScamDetectionResult: ScamDetectionResult = {
 export default function Home() {
   const [user] = createResource<clientPrincipal | null>(getUserInfo);
   const [start, setStart] = createSignal(false);
-  const [messages, setMessages] = createSignal<string[]>(mockMessages3);
+  const [messages, setMessages] = createSignal<string[]>([]);
   const [analyzeMessagesResult, setAnalyzeMessagesResult] = createSignal(
     defaultAnalyzeMessagesResult
   );
@@ -287,8 +280,8 @@ export default function Home() {
   return (
     <>
       <Center mb="$6" flex={"auto"} flexDirection="column">
-        <Heading size={"xl"}>Supercharge your calls</Heading>
-        <Text size={"lg"}>Gain more insights</Text>
+        <Heading size={"xl"}>Supercharge your convos</Heading>
+        <Text size={"lg"}>Get the context you never had</Text>
       </Center>
 
       <MessagesStore start={start()} messages={messages()} />
