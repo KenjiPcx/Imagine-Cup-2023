@@ -1,5 +1,6 @@
-const root = "http://localhost:7071";
-const rootEndpoint = "http://localhost:7071/api";
+// const root = "http://localhost:7071";
+const root = "";
+const rootEndpoint = `${root}/api`;
 
 // AI endpoints
 export const completionUrl = `${rootEndpoint}/completion`;

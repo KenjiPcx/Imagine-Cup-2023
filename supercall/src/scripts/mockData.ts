@@ -138,3 +138,10 @@ export const mockUser = {
   userId: "f62009ecfc354c1499137b8347884940",
   claims: [],
 };
+
+export const mockMessages4 = [
+  "Have you heard about this new app called SuperCall? It's amazing!",
+  "It extracts important information from your conversations, like tasks, meetings, and even topics that interest you. I used it to extract a list of action items from our team call yesterday. It saved me so much time!",
+  "Wow, that sounds really useful. I always forget the important details after a call.",
+  "Yeah, me too. And the best part is, you can even use the GPT terminal feature to ask questions about the conversation. It's like having your own personal assistant.",
+];

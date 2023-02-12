@@ -29,7 +29,7 @@ export default function Navbar() {
         <Box>
           <Anchor href="/">
             <Heading size="xl" fontWeight="$bold" pl="$2">
-              SuperCall
+              Chatnalysis
             </Heading>
           </Anchor>
         </Box>
@@ -45,7 +45,7 @@ export default function Navbar() {
       <Drawer opened={isOpen()} placement={"top"} onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader>SuperCall Menu</DrawerHeader>
+          <DrawerHeader>Chatnalysis Menu</DrawerHeader>
           <DrawerBody>
             <nav class="flex flex-col gap-2 mb-6">
               <Anchor as={Link} href="/">
