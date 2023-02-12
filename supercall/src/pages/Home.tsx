@@ -247,7 +247,7 @@ export default function Home() {
     const id = "save-call-info";
     showLoadingNotificationForAiProcessing(id);
     try {
-      if (summaryResults() !== "") {
+      if (summaryResults() === "") {
         await summarizeMessages();
       }
       const callInfo: CallInfo = {
@@ -255,7 +255,7 @@ export default function Home() {
         tasks: tasksDetectionRes,
         meetings: meetingsDetectionRes,
         contentOfInterests: contentOfInterests,
-        timestamp: new Date(),
+        timestamp: Date.now(),
       };
       await axios.post(saveCallUrl, {
         userId: user()!.userId,

@@ -10,8 +10,8 @@ export const identifyMeetingsUrl = `${rootEndpoint}/identifyMeetings`;
 export const identifyContentOfInterestUrl = `${rootEndpoint}/identifyContentOfInterests`;
 
 // Data endpoints
-export const getCallByKey = `${rootEndpoint}/getCallByKey`;
-export const getAllCallByUserId = `${rootEndpoint}/getAllCalls`;
+export const getCallByKeyUrl = `${rootEndpoint}/getCallByKey`;
+export const getAllCallByUserIdUrl = `${rootEndpoint}/getAllCalls`;
 export const saveCallUrl = `${rootEndpoint}/saveCall`;
 export const getUserAppSettingsUrl = `${rootEndpoint}/getUserAppSettings`;
 export const saveUserTopicsUrl = `${rootEndpoint}/saveTopicsOfInterestsForUser`;

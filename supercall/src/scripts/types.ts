@@ -3,7 +3,7 @@ export type CallInfo = {
   tasks?: Task[];
   meetings?: Meeting[];
   contentOfInterests?: ContentOfInterest[];
-  timestamp: Date;
+  timestamp: number;
 };
 
 export type AnalyzeMessagesResult = {
@@ -64,4 +64,14 @@ export type clientPrincipal = {
     typ: string;
     val: string;
   }[];
+};
+
+export type CallItem = {
+  id: string;
+  summary: string;
+  userId: string;
+  tasksId?: string;
+  meetingsId?: string;
+  contentOfInterestsId?: string;
+  timestamp: number;
 };

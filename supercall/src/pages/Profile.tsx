@@ -29,6 +29,7 @@ import axios from "axios";
 import RemoveTopicModal from "../components/profile/RemoveTopicModal";
 import TopicsBox from "../components/profile/TopicsBox";
 import AuthorizedUserCard from "../components/profile/AuthorizedUserCard";
+import { mockUser } from "../scripts/mockData";
 
 const AnonUserCard = lazy(() => import("../components/profile/AnonUserCard"));
 const TopicsFallbackCard = lazy(
@@ -41,7 +42,7 @@ const fetchProfileData: (
   if (!user) {
     return [];
   }
-  return ["test the size of this thing"];
+  // return ["test the size of this thing"];
   const res = await axios.post(getUserAppSettingsUrl, {
     userId: user.userId,
   });
@@ -50,17 +51,9 @@ const fetchProfileData: (
   return topics;
 };
 
-const defUser = {
-  userDetails: "kenjipcx",
-  userRoles: ["test"],
-  identityProvider: "test",
-  userId: "f62009ecfc354c1499137b8347884940",
-  claims: [],
-};
-
 export default function Profile() {
   // const [user] = createResource<clientPrincipal | null>(getUserInfo);
-  const [user, setUser] = createSignal(defUser);
+  const [user, setUser] = createSignal(mockUser);
   const [topics, { mutate, refetch }] = createResource(
     user(),
     fetchProfileData
@@ -70,14 +63,14 @@ export default function Profile() {
 
   let newTopicInput: any;
   const addTopic = () => {
-    if (topics) {
+    if (topics()) {
       mutate([...(topics() as string[]), newTopicInput.value]);
       newTopicInput.value = "";
     }
   };
 
   const removeTopic = () => {
-    if (topics) {
+    if (topics()) {
       mutate((topics() as string[]).filter((t) => t !== topicToRemove()));
     }
     onClose();
@@ -89,16 +82,17 @@ export default function Profile() {
   };
 
   const saveUserTopics = () => {
-    if (user()) {
-      try {
-        axios.post(saveUserTopicsUrl, {
-          userId: user().userId,
-          topicsOfInterests: topics(),
-        });
-        refetch();
-      } catch (err) {
-        console.warn(err);
-      }
+    if (!user()) {
+      return;
+    }
+    try {
+      axios.post(saveUserTopicsUrl, {
+        userId: user()!.userId,
+        topicsOfInterests: topics(),
+      });
+      refetch();
+    } catch (err) {
+      console.warn(err);
     }
   };
 

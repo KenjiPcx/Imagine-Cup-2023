@@ -1,8 +1,9 @@
 import { Avatar, Box, Heading } from "@hope-ui/solid";
+import { Accessor, Resource } from "solid-js";
 import { clientPrincipal } from "../../scripts/types";
 
 interface AuthorizedUserCardProps {
-  user: () => clientPrincipal | null;
+  user: Resource<clientPrincipal | null> | Accessor<clientPrincipal | null>;
 }
 
 export default function AuthorizedUserCard(props: AuthorizedUserCardProps) {
