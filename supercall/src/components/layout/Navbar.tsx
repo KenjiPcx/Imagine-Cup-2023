@@ -57,24 +57,31 @@ export default function Navbar() {
               <Anchor as={Link} href="/profile">
                 Profile
               </Anchor>
-              <Anchor as={Link} href="/call-history">
-                Call History
-              </Anchor>
-              <Heading flex={1} mt="$4" fontWeight="$medium" textAlign="start">
-                Productivity
-              </Heading>
-              <Anchor as={Link} href="/tasks">
-                Tasks
-              </Anchor>
-              <Anchor as={Link} href="/meetings">
-                Meetings
-              </Anchor>
-              <Anchor as={Link} href="/brain-dump">
-                Interests Brain Dump
-              </Anchor>
-              {/* <Anchor as={Link} href="/mental-notes">
+              <Show when={user()}>
+                <Anchor as={Link} href="/call-history">
+                  Call History
+                </Anchor>
+                <Heading
+                  flex={1}
+                  mt="$4"
+                  fontWeight="$medium"
+                  textAlign="start"
+                >
+                  Productivity
+                </Heading>
+                <Anchor as={Link} href="/tasks">
+                  Tasks
+                </Anchor>
+                <Anchor as={Link} href="/meetings">
+                  Meetings
+                </Anchor>
+                <Anchor as={Link} href="/brain-dump">
+                  Interests Brain Dump
+                </Anchor>
+                {/* <Anchor as={Link} href="/mental-notes">
                 Mental Notes
               </Anchor> */}
+              </Show>
             </nav>
             <Box mb="$4">
               <Show
