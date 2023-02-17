@@ -81,16 +81,15 @@ export default function Profile() {
     onOpen();
   };
 
-  const saveUserTopics = () => {
+  const saveUserTopics = async () => {
     if (!user()) {
       return;
     }
     try {
-      axios.post(saveUserTopicsUrl, {
+      await axios.post(saveUserTopicsUrl, {
         userId: user()!.userId,
         topicsOfInterests: topics(),
       });
-      refetch();
     } catch (err) {
       console.warn(err);
     }
