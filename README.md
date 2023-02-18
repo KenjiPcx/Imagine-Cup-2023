@@ -10,30 +10,17 @@ How to use instructions below
 
 ### What is Chatnalysis?
 
-Get more fun and productive with your calls!
-And so you don't forget what you were talking about!
+We often forget about what we talk about during a long conversation
+Chatnalysis is an app that aims to extract intelligence from conversations and help us get the most value from them
 </br>
 
-During calls
-
-- Get intent of the caller at any point of the call
-- Detect fraudalent content
-  - If it is, explains why it is a scam and advice to leave the call
-- Detect if its tech support related
-  - Show advice and warnings
-- Detect if its bank related
-  - Show advice and warnings
-- (Maybe) Otherwise if it is business oriented
-  - Give multiple suggestions on how to answer
-  - Analyze what the other user is trying to say in simple English
-
-At the end of the call
-
-- If the call is legit, gives user the choice to
+- Chatnalysis can
   - Summarizes the contents of the calls so you don't forget
-  - Calendar integration
-    - Helps schedules any events
-    - Helps schedules any todos
+  - Extract events
+  - Extract todos
+  - Extract content of interests
+  - Analyze for scam
+  - Help for asking for quick definitions or explaination using GPT
 
 ## Development
 
