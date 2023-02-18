@@ -40,6 +40,7 @@ import {
 import {
   showLoadingNotification,
   showLoadingNotificationForAiProcessing,
+  showNotification,
   updateLoadingNotification,
   updateLoadingNotificationForFailedJob,
   updateLoadingNotificationForSuccessfulJob,
@@ -139,6 +140,15 @@ export default function Home() {
   };
 
   const summarizeMessages = async () => {
+    if (messages.length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = "summarize-messages";
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -155,6 +165,15 @@ export default function Home() {
   };
 
   const analyzeMessagesForFurtherActions = async () => {
+    if (messages.length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = "analyze-messages";
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -173,6 +192,15 @@ export default function Home() {
   };
 
   const detectScamsAndShadyContent = async () => {
+    if (messages.length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = "detect-scams";
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -187,6 +215,15 @@ export default function Home() {
   };
 
   const extractTasks = async () => {
+    if (messages.length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = "extract-tasks";
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -217,6 +254,15 @@ export default function Home() {
   };
 
   const extractContentOfInterests = async (topicsOfInterests: string[]) => {
+    if (messages.length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = `extract-content-of-interests-${topicsOfInterests.join("-")}}`;
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -239,10 +285,14 @@ export default function Home() {
 
   const saveCallInfo = async () => {
     if (user() === null) {
-      console.log("User is not logged in");
+      showNotification(
+        "User is not logged in",
+        "User needs to be logged in to save call info",
+        "danger"
+      );
       return;
     }
-    console.log(user());
+
     const id = "save-call-info";
     showLoadingNotificationForAiProcessing(id);
     try {
