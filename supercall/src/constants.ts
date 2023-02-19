@@ -1,5 +1,5 @@
-// const root = "http://localhost:7071";
-const root = "";
+const usingProd = import.meta.env.PROD;
+const root = usingProd ? "" : "http://localhost:7071";
 const rootEndpoint = `${root}/api`;
 
 // AI endpoints
@@ -11,6 +11,7 @@ export const identifyTasksUrl = `${rootEndpoint}/identifyTasks`;
 export const identifyMeetingsUrl = `${rootEndpoint}/identifyMeetings`;
 export const identifyContentOfInterestUrl = `${rootEndpoint}/identifyContentOfInterests`;
 export const customExtractionUrl = `${rootEndpoint}/customExtractionCommand`;
+export const generateConversationUrl = `${rootEndpoint}/generateConversation`;
 
 // Data endpoints
 export const getCallByKeyUrl = `${rootEndpoint}/getCallByKey`;

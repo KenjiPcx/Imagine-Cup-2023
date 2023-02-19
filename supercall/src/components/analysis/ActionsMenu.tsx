@@ -17,6 +17,7 @@ interface ActionsMenuProps {
   extractTasks: () => void;
   extractMeetings: () => void;
   openCustomExtractionModal: () => void;
+  generateConversation: () => void;
 }
 
 export default function ActionsMenu(props: ActionsMenuProps) {
@@ -59,6 +60,9 @@ export default function ActionsMenu(props: ActionsMenuProps) {
             onSelect={props.openCustomExtractionModal}
           >
             Open GPT interface
+          </MenuItem>
+          <MenuItem colorScheme="neutral" onSelect={props.generateConversation}>
+            Generate conversation
           </MenuItem>
         </MenuGroup>
       </MenuContent>

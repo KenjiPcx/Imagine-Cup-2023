@@ -35,7 +35,7 @@ export default function ScamDetectionResultsModal(
           <Show
             when={props.scamDetectionRes.isScam}
             fallback={
-              <Box>
+              <Box mb="$6">
                 <Heading>No shady content detected</Heading>
                 <Text>We did not find anything wrong with the call</Text>
               </Box>
@@ -56,14 +56,14 @@ export default function ScamDetectionResultsModal(
                 )}
               </For>
             </Box>
-
-            <Box mb="$2">
-              <Heading fontSize={"$lg"} mb="$2">
-                ⏭️ What to do next?
-              </Heading>
-              <MessageBox message={props.scamDetectionRes.advice} />
-            </Box>
           </Show>
+
+          <Box mb="$2">
+            <Heading fontSize={"$lg"} mb="$2">
+              ⏭️ What to do next?
+            </Heading>
+            <MessageBox message={props.scamDetectionRes.advice} />
+          </Box>
         </ModalBody>
         <ModalFooter>
           <Button mx={"auto"} onClick={props.onClose}>
