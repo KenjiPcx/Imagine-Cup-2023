@@ -22,13 +22,15 @@ export const generateScamDetectionPrompt = (messages: string[]) => {
 export const generateTasksDetectionPromps = (messages: string[]) => {
   return `From this dialog, extract the tasks and potential tasks. After that, suggest some SMART subtasks to help achieve each goal and explain if possible. Return the result in json with this type 
     { "tasks": { "goal": string, "subtasks": { "action": string, "reason": string }[] }[] }
-    
+    tasks should be returned in an array
+
     The dialog is as follows: "${messages.join(" ")}"`;
 };
 
 export const generateMeetingsDetectionPrompt = (messages: string[]) => {
   return `From this dialog, extract the meetings and their details. A meeting should have a title, details about what it is about, names of people involved (only include names), a location and when it is happening. The title and details are mandatory fields, the rest are optional Return the results in json with this type
     { "meetings": { "title": string, "details": string, "participants": string, "datetime"?: string, "location": string, }[]  }
+    meetings should be returned in an array
     
     The dialog is as follows: "${messages.join(" ")}"`;
 };
@@ -41,6 +43,7 @@ export const generateExtractContentByInterestsPrompt = (
     ", "
   )}]. Return all of the content grouped by topic in json with this type 
     { "topics": { "topic": string, "content": string[] }[] }
+    topics should be returned in an array
     
     The dialog is as follows: "${messages.join(" ")}"`;
 };
