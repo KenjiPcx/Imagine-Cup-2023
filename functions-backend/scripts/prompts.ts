@@ -68,3 +68,17 @@ export const generateCustomExtractionPrompt = (
   
   ${prompt}`;
 };
+
+export const generateGenerateConversationPrompt = (prompt: string) => {
+  return `Generate me a hypothetical dialog based on factual information, it should be 400 words long at a minimum. ${prompt}. Merge all the contents into one paragraph and separate the sentences with a space
+
+For example, if the conversation generated is like this
+Person 1: Hello
+Person 2: World
+Person 1: 123
+
+I want it to be like this instead:
+Hello World 123
+
+Do not include the person speaking in the dialog, I just want the content directly`;
+};

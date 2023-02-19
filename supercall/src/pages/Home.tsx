@@ -47,6 +47,7 @@ import {
 } from "../scripts/notificationServiceHelper";
 import { getUserInfo } from "../scripts/auth";
 import CustomExtractionModal from "../components/analysis/CustomExtractionModal";
+import GenerateConversationModal from "../components/analysis/GenerateConversationModal";
 
 const ActionsMenu = lazy(() => import("../components/analysis/ActionsMenu"));
 const AnalyzeMessagesResultCard = lazy(
@@ -105,6 +106,11 @@ export default function Home() {
     onOpen: onCustomExtractionModalOpen,
     onClose: onCustomExtractionModalClose,
   } = createDisclosure();
+  const {
+    isOpen: isGenerateConversationModalOpen,
+    onOpen: onGenerateConversationModalOpen,
+    onClose: onGenerateConversationModalClose,
+  } = createDisclosure();
   const [contentOfInterests, setContentOfInterests] = createStore<
     ContentOfInterest[]
   >([]);
@@ -140,7 +146,7 @@ export default function Home() {
   };
 
   const summarizeMessages = async () => {
-    if (messages.length === 0) {
+    if (messages().length === 0) {
       showNotification(
         "No messages",
         "You need to record some messages first",
@@ -165,7 +171,7 @@ export default function Home() {
   };
 
   const analyzeMessagesForFurtherActions = async () => {
-    if (messages.length === 0) {
+    if (messages().length === 0) {
       showNotification(
         "No messages",
         "You need to record some messages first",
@@ -192,7 +198,7 @@ export default function Home() {
   };
 
   const detectScamsAndShadyContent = async () => {
-    if (messages.length === 0) {
+    if (messages().length === 0) {
       showNotification(
         "No messages",
         "You need to record some messages first",
@@ -215,7 +221,7 @@ export default function Home() {
   };
 
   const extractTasks = async () => {
-    if (messages.length === 0) {
+    if (messages().length === 0) {
       showNotification(
         "No messages",
         "You need to record some messages first",
@@ -239,6 +245,15 @@ export default function Home() {
   };
 
   const extractMeetings = async () => {
+    if (messages().length === 0) {
+      showNotification(
+        "No messages",
+        "You need to record some messages first",
+        "warning"
+      );
+      return;
+    }
+
     const id = "extract-meetings";
     showLoadingNotificationForAiProcessing(id);
     try {
@@ -254,7 +269,7 @@ export default function Home() {
   };
 
   const extractContentOfInterests = async (topicsOfInterests: string[]) => {
-    if (messages.length === 0) {
+    if (messages().length === 0) {
       showNotification(
         "No messages",
         "You need to record some messages first",
@@ -356,6 +371,7 @@ export default function Home() {
           extractTasks={extractTasks}
           extractMeetings={extractMeetings}
           openCustomExtractionModal={onCustomExtractionModalOpen}
+          generateConversation={onGenerateConversationModalOpen}
         />
       </Flex>
 
@@ -401,6 +417,13 @@ export default function Home() {
         onOpen={onCustomExtractionModalOpen}
         onClose={onCustomExtractionModalClose}
         messages={messages}
+      />
+
+      <GenerateConversationModal
+        isOpen={isGenerateConversationModalOpen}
+        onOpen={onGenerateConversationModalOpen}
+        onClose={onGenerateConversationModalClose}
+        setMessages={setMessages}
       />
     </>
   );
